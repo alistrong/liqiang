@@ -1,0 +1,64 @@
+about	algorithm
+1 股票，一次买入卖出，求最大收益
+public static int onlyOnceMax(int price[]){
+    if(price.length == 0){
+        return 0;
+    }
+    int min = a[0];
+    int res = 0;
+    for(int i=1;i<price.length;i++){
+        if(price[i]<min){
+            min= price[i];
+        }else if(price[i]-min >sum){
+            res = price[i]-min;
+        }
+    }
+    return res;
+}
+2 股票，可以进行无数次交易，但是买入之前必须先卖出，交易不重叠，求最大收益
+public static int noLimitMax(int price[]){
+    if(price.length ==0){
+        return 0;
+    }
+    int res = 0;
+    for(int i=0;i=price.length-1;i++){
+        if(price[i+1]>price[i]){
+             res += price[i+1]-price[i];
+        }
+    }
+    return res;
+}
+
+3 股票，可以进行两次交易，交易不能重叠，求最大收益,思路：(根据第一个问题，求出两个数组，第一个数组是i节点之前的最大收益，第二个数组是i节点之后的最小收益，相差最大值)
+public static int twoMax(int price[]){
+    if(price.length < 3){
+        return 0;
+    }
+    int maxRes = 0;
+    int first[]  = new int[price.length];
+    int second[] = new int[price.length];
+    for(int i=0;i<price.length;i++){
+        if(price[i]<min){
+            min = price[i];
+        }else if(price[i]-min > maxRes){
+            maxRes = price[i]-min;
+        }
+        first[i] = maxRes;
+    }
+    int minRes = price[price.length-2]-price[price.length-1];
+    int max = price[price.length-1];
+    for(int j=price.length-2;j>0;j--){
+        if(price[j] >max ){
+            max = price[j];
+        }else if(price[j]-max < minRes){
+            minRes = price[j]-max;
+        }
+        second[j] = minRes;
+    }
+    for(int i =0;i<price.length;i++){
+        if(first[i]-second[j]>result){
+            result = first[i]-second[i];
+        }
+    }
+    return result;
+}
