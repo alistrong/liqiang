@@ -147,3 +147,66 @@ public boolean isHuan(Node head){
     return false;
 }
 
+6.最大连续子数组
+public int maxsum(int a[]){
+    if(a==null || a.length==0){
+        return 0;
+    }
+    int sum = 0;
+    int max = Integer.MIN_VALUE;
+    for(int i=0;i<a.length;i++){
+        sum = sum+a[i];
+        if(sum>max){
+            max = sum;
+        }
+        if(sum<0){
+            sum=0;
+        }
+    }
+    return max;
+}
+
+7.最长递增子序列
+public int longgroup(int a[]){
+    if(a==null || a.length==0){
+        return 0;
+    }
+    int group[]= new int[a.length];
+    for(int i=0;i<a.length;i++){
+        int max = 1;
+        for(int j=0;j<i;j++){
+            if(a[j]<a[i]){
+                max=max(max,group[j]+1);
+            }
+        }
+        group[i]=max;
+    }
+    int result= 0;
+    for(int i=0;i<group[i];i++){
+        result= group[i]>result?group[i]:result;
+    }
+    return result;
+}
+
+//最长递增子序列长度的优化
+public int maxlong(int a[]){
+    int n=a.length;
+    int tail[]= new int[n];
+    int len=0;
+    for(int i=0;i<a.length;i++){
+        int index = binary(tail,len,a[i])
+        tail[index] = a[i];
+        if(len == index){
+            len++;
+        }
+    }
+    return len;
+}
+
+//最长公共子序列
+
+public int maxsame(int str1[],int str2[]){
+
+}
+
+
