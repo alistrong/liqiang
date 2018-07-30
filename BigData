@@ -1,0 +1,14 @@
+1.hadoop的简介
+hadoop 是由HDFS,mapReduce,zookeeper,HBase,hive几部分组成，最基础最重要的元素是用于存储底层节点文件的分布式文件系统HDFS和用于计算处理的mapReduce引擎
+hive是基于Hadoop的工具，提供完整的sql查询，将sql语句转化成mapReduce处理
+HBase是基于列储存的分布式数据库
+ZooKeeper是高效可拓展的协调系统，存储和协调关键共享状态
+HDFS是高容错的分布式文件系统，典型的主从模式，nameNode和多个datanode,namenode负责整个系统的文件的元数据信息的管理，集群中通常只有一台机器运行namenode
+实例，DataNode存储文件中的数据，集群中的机器分别运行一个datanode实例，名称节点和数据节点通过心跳机制进行定时通信。
+namenode主要负责管理分布式文件的命名空间，集群的配置信息，存储块的复制
+datanode主要存储meta_date，同时周期性的向namenode发送所有存在的文件块的报告。
+mapReduce:采用分治的思想，把任务分发到集群的各个节点，然后多个节点并行处理，最后汇总各个处理结果得到最终结果，输入块把数据分割成小的数据块，传给map节点，
+map节点根据得到的key/value处理得到多个或者1个key/value写入临时文件，reduce根据临时文件的数据，对相同key的进行迭代计算，最后得到最终结果。
+
+
+
