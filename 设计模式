@@ -1,0 +1,80 @@
+1.单例模式
+整个类只有一个实例，自行实例化向系统提供这个实例
+懒汉式
+public class Singleton{
+    private Singleton(){}
+    private static Singleton singleton = null;
+    public static Singletion getInstance(){
+        if(singleton == null){
+            singleton = new Singleton();
+        }
+        return singleton;
+    }
+}
+线程安全模式： 直接在getInstance()方法上加关键字synchronize，影响性能
+推荐线程安全模式的懒汉式写法：
+
+public class Singleton{
+     private Singletion(){}
+     private static Class InnerClass{
+          private static Singletion singleton = new Singleton();
+     }
+     public static Singleton getInstance(){
+          return InnerClass.singleton;
+     }
+}
+
+饿汉式 线程安全模式
+public class Singleton{
+    private Singleton(){}
+    private static Singleton singleton= new Singleton();
+    public static Singletion getInstance(){
+        return singletion;
+    }
+}
+
+2.工厂模式
+简单工厂模式
+工厂类，有一定的判断和逻辑，由Java中具体类实现
+抽象产品类：抽象类或者接口实现，
+具体产品类：具体的实现的产品类实现
+抽象产品类：
+public interface Car{
+    public void drive();
+}
+具体产品类：
+public class Benz implements Car{
+    public void drive(){
+        System.out.println("Benz");
+    }
+}
+工厂类：
+public class Driver{
+    public static Car get(String type){
+        if(type.equals("Benz")){
+            return new Benz();
+        }
+    }
+}
+Car car = Driver.get("Benz");
+car.drive();
+
+//工厂方法模式
+抽象工厂类；具体工厂类；抽象产品类；具体产品类
+抽象工厂类
+public interface Driver{
+    public Car drive();
+}
+public class BenzFactory implements Driver{
+    public Car drive(){
+        return new Benz();
+    }
+}
+public interface Car{
+    public void func();
+}
+public class Benz implements Car{
+    public void func(){
+    
+    }
+}
