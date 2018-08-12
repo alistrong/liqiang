@@ -1,0 +1,91 @@
+tree
+public class Tree{
+     int val;
+     Tree left;
+     Tree right;
+}
+//求树的高度
+public static int depth(Tree t){
+    if(t == null)return 0;
+    return Math.max(depth(t.left),depth(t.right))+1;
+}
+
+//判断平衡树
+public boolean isBalance = true;
+
+public boolean isBalance(Tree t){
+    maxDepth(t);
+    return isBalance;
+}
+public static int maxDepth(Tree t){
+    if(t == null){
+        return 0;
+    }
+    int left = maxDepth(t.left);
+    int right= maxDepth(t.right);
+    if(Math.abs(left-right)>1){
+        isBalance = false;
+    }
+    return Math.max(left,right)+1;
+}
+
+//求数中最长路径
+public int max = 0;
+
+public int maxLen(Tree t){
+    maxDepth(t);
+    return max;
+}
+
+public static int maxDepth(Tree t){
+    if(t == null) return 0;
+    int left = maxDepth(t.left);
+    int right = maxDepth(t.right);
+    max = Math.max(max,left+right);
+    return Math.max(left,right)+1;
+}
+
+//判断一个树的路径(根到叶子节点)和等于一个数
+public boolean isSum(Tree t,int sum){
+    if(t == null) return false;
+    if(t.right == null && t.left == null && t.val == sum ) return true;
+    return isSum(t.left,sum-t.val) || isSum(t.right,sum-t.val);
+}
+
+//判断树对称
+public boolean isduichen(Tree t){
+    if(t == null) return true;
+    return ist(t.left,t.right);
+}
+
+public static boolean ist(Tree t1,Tree t2){
+    if(t1==null && t2==null){
+        return true;
+    }
+    if((t1 == null && t2!=null) || (t1 !=null && t2 == null) || t1.val != t2.val){
+        return false;
+    }
+    return ist(t1.left,t2.left) && ist(t1.right,t2.right);
+}
+
+//最小路径
+public int minLen(Tree t){
+    if(t ==null) return 0;
+    int left = minLen(t.left);
+    int right = minLen(t.right);
+    return Math.min(left,right)+1;
+}
+
+//左叶子节点的和
+public int sumleft(Tree t){
+     if(t == null) return 0;
+     if(isleaf(t.left)) return t.val+sumleft(t.right);
+     return sumleft(t.left)+sumleft(t.right);
+}
+public static boolean isleaf(Tree t){
+    if(t ==null) return false;
+    return t.left ==null && t.right==null;
+}
+
+
+
