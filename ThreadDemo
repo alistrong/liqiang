@@ -1,0 +1,24 @@
+线程池
+首先介绍几个概念
+状态：running：刚创建线程池的状态。
+     shutdown:不能往队列中添加任务，但可以执行队列中的任务，正在运行任务的工作线程不可中断，保证完成
+     stop:不能往队列中添加任务，也不能再执行任务队列中已添加的任务
+     tidying:
+     terminated:表示线程池已完全终止，
+ mainLock: 保证成员变量（ctl,workQueue,workers,largetstPoolsize,completedTaskCount）并发安全问题，
+ workers：记录所有的工作线程
+ workQueue:记录所有待执行的任务，使用阻塞队列BlockingQueue，
+ largestPoolSize:线程池中曾拥有过的最大工作线程个数
+ completedTaskCount:线程池完成过任务的总个数
+ threadFactory:创建线程的工厂类
+ handler:当任务拒绝时，处理被拒绝的任务
+ keepAliveTime:工作线程允许空闲的超时时间，一般针对超过核心线程池数量的工作线程
+ allowCoreThreadTimeout:是否允许核心池的工作线程超时释放
+ corePoolSize:线程池核心线程个数
+ maximumPoolSize:线程池最大的线程个数
+ 
+好处：1 性能上，可以重复利用创建好的线程来降低线程的创建和销毁带来的消耗
+     2 稳定管理上，因为线程是稀缺资源，如果无限创建以一方面消耗资源，另外一方面降低系统稳定性，使用线程池进行统一管理分配
+工作原理：
+    当一个任务交给线程池后，首先判断核心线程池中的线程是否都在执行任务，如果不是，则创建一个工作线程来执行任务，如果都在执行任务，判断当前工作队列是否满，
+ 没有满，则放入任务队列进行等待，如果满了，开启新的工作线程来执行任务
