@@ -78,3 +78,36 @@ public class Benz implements Car{
     
     }
 }
+
+3 多线程 生产消费者模式
+当生产者和消费者只有一个的时候，这种模式也成为pipe模式，即管道模式，生产者和消费者通过channel来传递数据，数据在通道中以什么顺序传递（1顺序队列，2栈倒叙，
+3优先队列-根据权重或者优先级传递），在Java中可以用BlockQueue来实现，下面是一个简单例子
+
+public class Table{
+    private final int count;
+    private final Queue<String> queue;
+    
+    public Table(int num){
+        this.count=num;
+        queue = new ListedList<String>();
+    }
+    
+    public synchronized void put(String food) throws InterruptedException{
+        while(queue.size()>count){
+            wait();
+        }
+        queue.offer(food);
+        notifyAll();
+    }
+    
+    public synchronized String take() throws InterrputedException{
+        while(queue.size()<0){
+           wait();
+        }
+        String food = queue.poll();
+        notifyAll();
+        return food;
+    }
+}
+
+基于BlockingQueue来实现更简单，不用自己写wait() notifyAll()
