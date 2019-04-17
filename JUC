@@ -1,0 +1,93 @@
+大类上JUC分为以下几种：
+
+1 并发容器：ArrayBlockingQueue,ListedBlockingQueue,.....
+2 同步设备：
+3 锁:
+4 原子对象：
+5 线程池：
+
+并发容器详解:
+
+class ArrayBlockingQueue<E> extends AbstractQueue implements BlockingQueue<E>{
+    final Object[] items;
+    int takeIndex;
+    int putIndex;
+    int count;
+    final ReentrantLock lock;
+    private final Condition notEmpty;
+    private final Condition notFull;
+    public ArrayBlockingQueue(int capacity,boolean fair){
+        this.items = new Object[capacity];
+        lock = new ReentrantLock(fair);
+        notEmpty = lock.newCondition();
+        notFull = lock.newCondition();
+    }
+    public boolean offer(E e){
+        checkNotNull(e);
+        finalReentrantLock = this.lock;
+        lock.lock();
+        try{
+            if(count == item.length) return false;
+            else enqueue(e); return true;// enqueu() 里往队列里加数据,索引位置变化，count++; notEmpty.signal();
+        }finally{
+            lock.unlock();
+        }
+    }
+    public E poll(){
+        final ReentrantLock lock = this.lock;
+        lock.lock();
+        try{
+            return (count==0)?null:dequeue();//获取数据，索引变化，count--，notFull.signal();
+        }finally{
+            lock.unlock();
+        }
+    }
+    
+    class LinkedBlockingQueue {
+        static class Node<E>{ E item; Node<E> next; Node(E x){item = x;}}
+        private final int capacity;//容量
+        private final AtomicInteger count = new AtomicInteger();//当前个数
+        transient Node<E> head;
+        private transient Node<E> last;
+        private final ReentrantLock takeLock = new ReentrantLock();
+        private final ReentrantLock putLock = new ReentrantLock();
+        private final Condition notEmpty = takeLock.newCondition();
+        private final Condition notFull = putLock.newCondition();
+    }
+    
+    对比：LinkedBlockingQueue 支持两个锁，put和taken两个锁，某些操作单独加各自的锁，不冲突，加速吞吐量；利用AtomicInteger保证两个锁变化数据可见；
+         一个链表，一个数组，初始化时Linked有默认MAX,Array必须传入一个值
+         
+    
+    
+    
+    同步设备：
+    CountDownLatch: 并发工具类，允许一个线程或多个线程等其他线程操作执行完后再执行
+    class CountDownLatch{
+        private final Sync sync;
+        public CountDownLatch(int count){this.sync = new Sync(count);}
+        public void await()throws InterruptedException{sync.acquireSharedInterruptibly(1);}
+        public void countDown(){sync.releaseShared(1)}
+        public long getCount(){return sync.getCount();}
+    }
+    核心是Sync implements AQS{
+        Sync(int n){setState(n);}
+        int getCount(){return getState();}
+        tryAcquireShared(int acquires){return (getState()==0? 1:-1);}
+        tryReleaseShared(int releases){}
+        ......
+    }
+    下面详细讲解AQS
+    共享资源volatile int state {三种方式访问，setState(),getState(),compareAndSetState()},线程等待队列（多线程争用资源阻塞会进入此队列）FIFO
+    两种共享方式：同时实现独占和共享两种方式，如ReentrantReadWriteLock
+    1 Exclusive (独占，只有一个线程能执行，ReentranLock)
+    2 Share(共享，多个线程可同时执行，eg Semaphore CountDownLatch)
+    不同的共享器需要自己去实现那个获取state和释放state方法，即以下方法
+    tryAcquire();tryAcquireShared();tryRelease();tryReleaseShared()
+    
+    其他的队列维护AQS已经做好了
+    
+    
+    
+    
+}
