@@ -84,8 +84,17 @@ class ArrayBlockingQueue<E> extends AbstractQueue implements BlockingQueue<E>{
     2 Share(共享，多个线程可同时执行，eg Semaphore CountDownLatch)
     不同的共享器需要自己去实现那个获取state和释放state方法，即以下方法
     tryAcquire();tryAcquireShared();tryRelease();tryReleaseShared()
-    
     其他的队列维护AQS已经做好了
+    
+    CyclicBarrier:回环栅栏 让一组线程等待到达某种状态之后再开始全部执行
+    
+    Semaphore：信号量，控制同时访问的线程个数，与锁有点类似，控制共享资源的访问权限
+    class Semaphore{
+        public Semaphore(int permits)//默认非公平方式， public Semaphore(int permits,boolean fair);
+        private final Sync sync;
+        void acquire();//获取前线程一直阻塞
+        void release();//释放信号量
+    }
     
     
     
