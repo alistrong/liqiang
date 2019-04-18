@@ -61,7 +61,7 @@ class ArrayBlockingQueue<E> extends AbstractQueue implements BlockingQueue<E>{
     
     
     
-    同步设备：
+同步设备：
     CountDownLatch: 并发工具类，允许一个线程或多个线程等其他线程操作执行完后再执行
     class CountDownLatch{
         private final Sync sync;
@@ -96,6 +96,24 @@ class ArrayBlockingQueue<E> extends AbstractQueue implements BlockingQueue<E>{
         void release();//释放信号量
     }
     
+锁：
+    1 ReentrantLock
+    Class ReentrantLock{
+        private final Sync sync;
+        public ReentrantLock(){sync = NonfairSync()} public ReentrantLock(boolean fair){sync = fair? new FairSync() : new NonFairSync()}
+        public void lock(){sync.lock();}
+        public boolean tryLock(){return sync.nonfairTryAcquire(1);}
+        public void unlock(){sync.release(1);}
+        public Condition newCondition(){return sync.newCondition();}
+    }
+    // 可重入的独占锁，同步通过实现AQS，锁的竞争依靠CAS和Unsafe
+
+    2 ReentrantReadWriteLock
+    Class ReentrantReadWriteLock{
+        private final ReentrantRederWriteLock.ReadLock readerLock;
+        private final ReentrantRederWriteLock.WriteLock writeLock;
+        final Sync sync;
+    }
     
     
     
