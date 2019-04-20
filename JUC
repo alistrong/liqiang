@@ -137,6 +137,31 @@ class ArrayBlockingQueue<E> extends AbstractQueue implements BlockingQueue<E>{
     }
     工具类 AtomicIntegerArray //原子更新数组类型，在之前的基础上，加上index字段来确定更新的位置
     工具类 AtomicReference //
+    .....
     
-    
-}
+
+线程池：
+1 为什么用线程池：线程很占用系统资源，如果对线程管理不善的话很容易出问题，一般利用线程池对线程进行管理，（1 通过复用线程来减少线程的创建和销毁带来的
+性能损耗，2 线程是稀缺资源，无限次创建会消耗资源，并且降低系统的稳定性，所以用线程池来管理）
+2 线程池工作原理： 首先判断核心线程数是否已满（都在执行任务）,没有则创建一个核心线程来处理任务，否则进入判断等阻塞队列是否已满，没有满则进去队列，否则
+  判断线程池中所有线程是否都在执行任务(max thread)，没有，则创建线程处理任务，否则handler处理（抛弃）
+3 具体源码：
+  ThreadPoolExecutor{
+      private volatile int corePoolSize;//核心线程个数
+      private volatile int maximumPoolSize;//最大线程个数
+      private volatile long keepAliveTime; // 空闲线程存活时间，如果当前线程超过了corePoolSize且超过time，
+      private final BlockingQueue<Running> workQueue;//阻塞队列
+      private volatile ThreadFactory threadFactory;//线程工厂
+      private volatile RejectedExecutionHander hander; //处理策略
+      处理策略包括（直接抛弃，抛弃并抛异常，利用调用者线程处理，丢弃阻塞队列中排队最久的任务，执行）
+ 4 线程池关闭：
+  shutdown和shutdownNow原理都是遍历线程池中的线程，依次中断线程，
+  shutdownNow:将线程池状态标为stop状态，然后尝试停止所有执行和未执行的任务的线程，
+  shutdown:将线程池标为shutdown状态，然后中断未执行任务的线程，
+  可以看出shutdown会等待正在执行的线程执行完任务后，shutdownNow会一视同仁，isShutdown和isTerminated
+ 5 线程池的参数配置（从不同角度来设置）：
+  从任务的性质：如果是CPU密集的，尽可能配置少的线程数，如核数+1, 如果是IO密集型的即需要大量等待IO操作的，线程不是一直在执行任务的，配多一点2*核数
+  从任务的优先级：可以用PriorityBlockingQueue来保证优先级，
+ 
+  }
+  
