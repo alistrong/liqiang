@@ -153,6 +153,7 @@ class ArrayBlockingQueue<E> extends AbstractQueue implements BlockingQueue<E>{
       private final BlockingQueue<Running> workQueue;//阻塞队列
       private volatile ThreadFactory threadFactory;//线程工厂
       private volatile RejectedExecutionHander hander; //处理策略
+   }
       处理策略包括（直接抛弃，抛弃并抛异常，利用调用者线程处理，丢弃阻塞队列中排队最久的任务，执行）
  4 线程池关闭：
   shutdown和shutdownNow原理都是遍历线程池中的线程，依次中断线程，
@@ -162,6 +163,31 @@ class ArrayBlockingQueue<E> extends AbstractQueue implements BlockingQueue<E>{
  5 线程池的参数配置（从不同角度来设置）：
   从任务的性质：如果是CPU密集的，尽可能配置少的线程数，如核数+1, 如果是IO密集型的即需要大量等待IO操作的，线程不是一直在执行任务的，配多一点2*核数
   从任务的优先级：可以用PriorityBlockingQueue来保证优先级，
- 
-  }
+
+Future,FutureTask等异步调用结果介绍
+  在多线程实现模式中，不管是Thread还是Runnable都没办法获取运行的结果，Future表示一个可能没有完成异步任务的结果，针对这个结果添加Callable来做处理
+   interface Future<V>{
+       boolean cancel();
+       boolean isCancelled();
+       boolean isDone();
+       V get() throws InterruptException;
+       V get(long timeOut,TimtUnit unit) throws ...;
+   }//Future就是对Runnable或者Callable任务的执行结果进行取消或者判断是否完成和获取结果，get()任务结果会阻塞到任务完成
+   interface RunnableFuture<V> implements Future<V>,Runnable{
+       void run();
+   }
+   interface Callable<V>{
+       V call() throws Exception;
+   }
+   class FutureTask implements RunnableFuture<V>{ //可以看出FutureTask可以做为Runnable运行线程，又可以作为Future获取运行结果
+       private Callable<V> callable;
+       public FutureTask(Callable<V> callable){ this.callbale = callable;};
+       public FutureTask(Runnable runnable,V result);
+   }
+   使用上，FutureTask作为Runnable接口使用 new Thread（ new FutureTask(task implements Callable)） thread.start(); futureTask.get()
+   另外Task implements Callabe<V>{} Future<Integer> future =  ExecutorService.submit(task); future.get();
+   
+   
+   
+   
   
