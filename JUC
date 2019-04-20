@@ -78,13 +78,19 @@ class ArrayBlockingQueue<E> extends AbstractQueue implements BlockingQueue<E>{
         ......
     }
     下面详细讲解AQS
+    AQS主要包括一个int类型的state共享变量来表示同步状态和一个FIFO组成的等待队列，同步状态的释放和获取需要同步器自己去定义具体逻辑，而状态的改变和
+    阻塞和等待的机制由AQS自己已经定义实现，对同步组件来说不关系。
+    
     共享资源volatile int state {三种方式访问，setState(),getState(),compareAndSetState()},线程等待队列（多线程争用资源阻塞会进入此队列）FIFO
     两种共享方式：同时实现独占和共享两种方式，如ReentrantReadWriteLock
     1 Exclusive (独占，只有一个线程能执行，ReentranLock)
     2 Share(共享，多个线程可同时执行，eg Semaphore CountDownLatch)
     不同的共享器需要自己去实现那个获取state和释放state方法，即以下方法
     tryAcquire();tryAcquireShared();tryRelease();tryReleaseShared()
-    其他的队列维护AQS已经做好了
+    其他的(等待通知机制)队列维护AQS已经做好了
+    
+    Condition详解：
+    内部维护等待队列，所有调用condition.wait()都会进去等待队列中，同时释放lock,
     
     CyclicBarrier:回环栅栏 让一组线程等待到达某种状态之后再开始全部执行
     
@@ -106,6 +112,8 @@ class ArrayBlockingQueue<E> extends AbstractQueue implements BlockingQueue<E>{
         public void unlock(){sync.release(1);}
         public Condition newCondition(){return sync.newCondition();}
     }
+    首先介绍写锁的实现：
+    同一时刻写锁不能被多个线程获取到，很显然写锁是独占式锁，写锁的同步语义是通过重新tryAcquire，tryrelease方法来实现,读锁通过tryReleaseShared()
     // 可重入的独占锁，同步通过实现AQS，锁的竞争依靠CAS和Unsafe
 
     2 ReentrantReadWriteLock
@@ -114,7 +122,21 @@ class ArrayBlockingQueue<E> extends AbstractQueue implements BlockingQueue<E>{
         private final ReentrantRederWriteLock.WriteLock writeLock;
         final Sync sync;
     }
-    
+
+原子类操作：
+    工具类 AtomicInteger
+    class AtomicInteger{
+        private static final Unsafe unsafe = Unsafe.getUnsafe();
+        private static final long valueOffset;
+        private volatile int value;
+        public final int addAndGet(int n){}//以原子方式将输入的值与实例中原值相加，并返回最新的值
+        public final int incrementAndGet() //以原子方式将实例中的值进行加1操作，并返回最新的值
+        public final int getAndSet(int n)//将实例中的值更新为输入的值，并返回之前的值
+        public final int getAndIncrement(){return unsafe.getAndAddInt(this, valueOffset, 1);}//以原子方式将实例中的值进行加1，并返回以前的值
+        //原子类的操作主要依靠Unsafe类的compareAndSwapInt()类似的接口来保证
+    }
+    工具类 AtomicIntegerArray //原子更新数组类型，在之前的基础上，加上index字段来确定更新的位置
+    工具类 AtomicReference //
     
     
 }
