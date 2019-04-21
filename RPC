@@ -1,0 +1,27 @@
+RPC=>remote procedure call 远程过程调用 //跨进程之间调用的行为都可称为这个
+  eg:web server/ http / hessian / dubbo / spring cloud / thrift
+  tcp，socket都不算RPC里面，（序列化，编码解码）socket只是传输，
+               rpc
+  client  ===============> server  
+一次RPC请求主要包括功能如下： 序列化，网络传输，报文编解码
+大概讲解一下完整RPC的过程：
+1 首先提供服务方服务启动后把服务暴露给注册中心
+2 注册中心将服务提供的ip下发到客户端
+3 对于调用方就是调用本地的service方法，
+3.1 这个通过动态代理的方式透明化调用（调用模块包括：负载均衡，容错，传输）
+3.2 传输通过RPC协议，包括 序列化，协议编码，网络传输
+4  服务端收到请求，对请求接受网络传输，进行协议解码，反序列化，通过线程池调用服务端的方法，得到结果，再进行序列化，编码传给调用方
+
+Http Response协议
+相应行： version "空格" status "空格" description "/r/n"
+相应头： key "空格" value "/r/n"
+相应体: 
+Http Resquest协议
+请求行: method "空格" url "空格" version /r/n
+请求头：key "空格" value /r/n
+请求体：
+每个通讯都有自己的报文格式，有的是二进制格式，有的是字符格式，二进制格式性能更好，阅读性差，
+Dubbo的协议如下：
+head：  标志位（请求，响应，事件） |  status
+request body:  版本号 | 接口路径 | 接口版本 | 方法名称 | 参数类型 | 参数值
+response body:  结果标志（无结果，有结果，异常） | 结果
