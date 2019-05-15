@@ -48,7 +48,23 @@
   需要建索引的字段：order by, group by, distinct,where ,join 
   索引字段禁止策略：1 %前导；2 not in/like;3 区分度低，比如性别；4 不能在索引列进行数学和函数运算
   索引字段顺序考虑每个字段去重之后的数量，区分度最大（个数最多）的放在前面
-  sql优化：避免大SQL，将复杂sql拆分多条简单sql，减少mysql端的数学运算和逻辑判断；少用select*,只去需要的列，避免无谓IO.cpu和网络开销；where 
-  条件字段类型和传入的类型保持一致，避免隐式转换 eg code varchar(50) where code = '1000'(使用索引) where code =1000(不使用索引)
+  
+  
+  sql语句优化：
+  使用limit对查询结果限定；
+  少用select*,只去需要的列，避免无谓IO.cpu和网络开销;
+  避免大SQL，将复杂sql拆分多条简单sql;
+  Or改成IN ：OR的效率是n级别 ，IN的效率是log(n)级别，in的个数建议控制在200以内。
+  减少mysql端的数学运算和逻辑判断；
+  where 条件避免使用!=操作符，否则会放弃索引，进行全表扫描。
+  where 条件字段类型和传入的类型保持一致，避免隐式转换 eg code varchar(50) where code = '1000'(使用索引) where code =1000(不使用索引)
   分页优化：select * from table limit 1000,10 偏移越大越慢。select * from table where id >=() limit 10;
   因为分页语句查询的时间和起始记录的位置成正比，
+  
+8.设计mysql表需要注意的地方
+  表字段避免null值出现，一方面因为占用索引，另外一方面很难查询优化，推荐使用0来代替null
+  尽量使用int而非bigint，非负的话加上unsigned，这样数值容量扩大一倍，当然能使用tinyint，smallint和mediumint更好。
+  使用枚举类型或者整形代替字符串类型
+  尽量使用timestamp代替datetime
+  整形存ip
+  
