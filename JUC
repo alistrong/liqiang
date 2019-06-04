@@ -88,6 +88,11 @@ class ArrayBlockingQueue<E> extends AbstractQueue implements BlockingQueue<E>{
     不同的共享器需要自己去实现那个获取state和释放state方法，即以下方法
     tryAcquire();tryAcquireShared();tryRelease();tryReleaseShared()
     其他的(等待通知机制)队列维护AQS已经做好了
+    AQS里面的acquire()流程：
+    1 调用自定义同步器tryacquire()尝试获取资源尝试，成功返回
+    2 没成功，调addWaiter()进入等待队列队尾并标记独占模式
+    3 acquireQueue()使线程在等待队列中休息，有机会（unpack()或者中断）会尝试获取资源，获取资源返回，在等待过程中被中断返回true，否则false
+    4 在等待过程中如果被中断，是不响应的，只有获取资源再进行自我中断。
     
     Condition详解：
     内部维护等待队列，所有调用condition.wait()都会进去等待队列中，同时释放lock,
