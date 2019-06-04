@@ -107,6 +107,11 @@ class ArrayBlockingQueue<E> extends AbstractQueue implements BlockingQueue<E>{
         void release();//释放信号量
     }
     
+    //对比CountDownLatch,CyclicBarrier 
+    1 共同点：两个都可以做到线程之间的等待，只是侧重点不同，
+    2 CountDownLatch更倾向于线程A等待其他线程执行完自己才执行，而CycliBarrier更倾向于一组线程互相等待到某个状态，再同时执行
+      一个可以循环利用，reset（）,另外一个一次性
+    
 锁：
     1 ReentrantLock
     Class ReentrantLock{
