@@ -1,0 +1,13 @@
+1 定位CPU高的原因：
+   首先：根据输入top命令后 再输入P， 查看cpu消耗高的pid。 
+   然后：根据命令 top -P -a pid 查看这个pid下面消耗CPU最大的线程 tid  (printf '%x\n' tid 得到tid对应的十六进制)
+   最后：jstack pid|grep tid(十六进制)            jstack(查看当前所有线程的运行情况和线程当前状态)
+   
+   jstack 文件：   1   死循环 
+                  2   wait()  Thread.State: WAITING
+                  3   死锁    deadlock
+                  4   等待IO  
+2 定位堆溢出问题：
+   首先：利用jstat -gcutil pid 查看堆内存使用情况.
+   然后：jmap dump:format=b,file =[文件输出路径][pid] 得到dump出来的文件              jmap(监视进程运行中的jvm物理内存的占用情况)
+   最后：利用分析工具，如MAT
