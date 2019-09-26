@@ -1,0 +1,31 @@
+AQS
+AbstractQueuedSynchronizer抽象类是concurrent包的核心，这个框架提供一套通用的机制来管理同步状态，线程的阻塞与唤醒和管理等待队列
+
+1 同步状态的管理
+ 同步状态即资源， private volatile int state，并暴露了getState(),setState()和compareAndSetState()接口来获取和更新状态
+
+2 线程的阻塞与唤醒
+JDK1.5之前，除了内置的监视器机制外，没有其他安全便捷的唤醒与阻塞线程
+1.5之后，locks包提供了LockSupport类可以作为阻塞唤醒的工具
+LockSupport类提供了两个核心方法：park()//阻塞当前调用线程 unpark()// 唤醒指定线程
+这个与object类的wait(),signal()类似，但是locksupport从语意讲比object类的方法更清晰
+
+3 等待队列
+ AQS的核心，整个框架的关键就是如何在并发状态下管理被阻塞的线程。
+ 等待队列是严格的FIFO队列，CLH锁的一种变种，使用双向链表实现
+ 
+ 3.1 结点定义
+  CLH队列的结点是对线程的包装，分为两种类型：共享，独占
+  Node{
+     static final Node SHARED = new Node(); //共享
+     static final Node EXCLUSIVE = null; //独占
+     static final int CANCELED = 1 ,SINGAL = -1, CONDITION = -2, PROPAGATE = -3;
+     volatile int waitStatus;
+     volatile Node pre;
+     volatile Node next;
+     volatile Thread thread;    
+  }
+  3.2 队列定义
+  当前线程请求资源时，请求不到会将线程包装成结点，将其挂载(cas)在队列尾部
+
+
