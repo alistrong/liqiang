@@ -1,0 +1,11 @@
+Condition接口是对原生的Object.wait() 和Object.notify()进行增强
+Condition接口的实现类ConditionObject 在AQS中，对于ReentranLock中的newCondition()方法是创建了一个ConditionObject对象
+Condition作为AQS的内部类，复用了AQS的结点，维护了一个条件队列，队列初始结构如下：
+
+class ConditionObject{
+    private transient Node firstWaiter;//队列首节点指针
+    private transient Node lastWaiter;//队列尾结点指针
+    
+}
+
+当线程在指定Condition对象上等待的时候，其实就是将线程包装成结点，加入了条件队列，然后阻塞，当线程被通知唤醒时，则将条件队列中的结点转换成等待队列中的结点。
