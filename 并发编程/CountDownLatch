@@ -1,0 +1,20 @@
+CountDownLatch J.U.C中的一个同步器类，可作为倒数计数器使用
+eg: 现有三个线程threadA,threadB,mainThread,CountDownLatch初始计数1
+CountDownLatch switcher = new CountDownLatch(1);
+threadA.await();
+threadB.await();
+mainThread.countDown();
+
+###分析ThreadA.await() ,就是响应中断的。
+首先判断是否被中断，被中断直接抛中断异常；
+然后判断state==0?表示无锁，可以继续执行；
+尝试获取锁失败后，包装成共享节点，插入等待队列；
+接着自旋，先尝试获取一次锁，失败后，判断是否要进入阻塞，进而阻塞。
+
+###分析mainThread.countDown(),该方法调用，threadA,threadB被唤醒
+首先会compareAndSetState(c,c-1);
+如果state！= 0,返回false，啥都不处理
+如果state== 0,compareAndSetWaitStatue将头结点的等待状态置为0，表示将唤醒后续结点，通过unparkSuccessor唤醒后继结点。
+
+共享结点一旦被唤醒，会向队列后部传播状态，以实现共享结点的连续唤醒，
+即当锁释放时，所有持有该锁的共享线程都被唤醒，从等待队列移除。
