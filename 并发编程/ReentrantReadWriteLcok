@@ -1,0 +1,41 @@
+ReentrantReadWriteLock
+假设有四个线程，threadA，threadB,threadC,ThreadD,其中A,B,D是读线程，C是写线程
+private final ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
+private final Lock r =rwl.readLock();
+private final Lock w =rw1.writeLock();
+
+threadA r.lock();
+threadB r.lock();
+threadC w.lock();
+threadD r.lock();
+
+线程A调用读锁lock()
+1首先判断写锁有没有被其他线程占用
+2等待队列中队首没有其他线程（公平策略）
+3读锁重入次数没有打到最大值
+4CAS修改state成功 ，
+threadA 获取读锁成功，此时等待队列为null，写锁数量：0；读锁数量：1
+
+线程B调用读锁lock()
+由于读锁是共享锁，此时写锁未被占用，threadB也可以拿到读锁，此时等待队列为null, 写锁数量：0；读锁数量：2
+
+线程C调用写锁lock()
+判断当前线程是否持有写锁（没有），最后调用acquireQueued并加入等待队列，写锁数量：0，读锁：0
+
+线程D调用读锁lock()
+获取成功，写锁：0，读锁：3
+
+线程A调用unlock()
+state--
+当读锁state==0时，返回true，此处仅仅修改state值
+线程B调用unlock()
+跟A一样
+线程D调用unlock()
+state--,此时state==0,unparkSuccessor()
+
+而之前线程C被从原阻塞唤醒，进行下一次自旋操作，调用tryAcquire获取成功。
+
+在非公平策略中，写锁的获取永远不需要排队，是性能考虑，防止写线程一直处于饥饿状态
+
+当等待队列首节点是共享节点，说明当前写锁被占用，当写锁释放时，会以传播方式唤醒头结点之后临近的各个共享结点
+当等待队列首节点是独占节点，说明当前读锁被占用，当读锁释放时，会唤醒队首的独占节点。
