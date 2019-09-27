@@ -1,0 +1,19 @@
+CopyOnWriteArrayList{
+    final transient ReentrantLock lock = new ReentrantLock();
+    private transient volatile Object[] array;
+    
+    public boolean add(E e){
+        final ReentrantLock lock = this.lock;
+        lock.lock();
+        try{
+            1 复制一个新的数组
+            2 插入新值
+            3 将新的数组指向原来的引用
+            return true;
+        }finally{
+            lock.unlock();
+        }
+    }
+}
+
+增删改都需要获取锁，锁只有一把，而读操作不需要获取锁，支持并发
