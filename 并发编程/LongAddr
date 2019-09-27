@@ -1,0 +1,21 @@
+LongAddr extends Striped64 implements Serializable{
+
+}
+
+Cell{
+    volatile long value;
+}
+
+longValue(){
+    return sum();
+}
+sum() ==> base + cell[]
+
+increment(){
+    add(1l);
+}
+1 先对base进行CAS操作，成功（即并发量不大，这个跟AtomicLong原理一样）就结束了
+2 判断cells非空，取cells中的一个元素a判断是否是空，对a进行cas操作，成功就结束了，
+3 当更新的位置的元素为空时插入新的cell元素，否则在该位置进行CAS操作，CAS失败且数组大小没有超过核数就扩容cells数组。
+
+总体：相对于对单个变量的CAS操作，分散为对数据cells中多个元素CAS操作，取值时进行求和。
