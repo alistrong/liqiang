@@ -4,18 +4,23 @@ redis 是key/value的内存存储系统，整个数据库加载到内存中进�
 value的数据类型可以是String,set,list,hash,sorted set
 1 String
 内部存储默认就是字符串，被redisObject所引用，遇到incr,decr操作时，转成数值进行计算，此时redisObject的encoding是int
+底层实现有三种：int,raw,embstr. int编码和embstr编码在一定条件下会转化成raw编码对象
+int: 8个字节的长整形
+embstr：<=39个字节的字符串
+raw: >39个字节的字符串，长度动态可变，char buf[];int len;int free; 
 
 2 Hash
 redis的hash实际内存存储的Value为一个HashMap,并提供了直接存取这个Map成员的接口
-这个HashMap有两种实现方式，成员较少时，为了省内存采用一维数组紧凑存储，此时redisObject的encoding是zipmap
+这个HashMap有两种实现方式，成员较少时，为了省内存采用一维数组紧凑存储，此时redisObject的encoding是ziplist
                          当成员多时，转成真正的hashMap,此时encoding是ht
   
 3 List
 应用场景非常多，eg 关注列表，粉丝列表
-实现方式是双向链表，即可以支持反向查找和遍历
+实现方式是双向链表，即可以支持反向查找和遍历,当数据较少时，实现结构是压缩列表
 
 4 Set
 实现方式是一个value永远是null的HashMap,实际就是通过计算hash的方式来快速排重的
+如果一个集合只含有整数且元素不多时使用intset（整数集合）作为底层实现
 
 5 Sorted Set
 有序（score）并且不重复的集合列表
