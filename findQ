@@ -48,4 +48,36 @@
   思路：首先找到该接口，通过压测工具不断加大访问力度，如果该接口中某个位置比较耗时，由于我们访问的频率很高，那么大多数的线程最终都将阻塞于该阻塞点
        这样通过多个线程具有相同的堆栈日志，基本可以定位耗时的代码位置。
        
+       
+ 线上问题排查的常用命令
+ 
+ 1 了解机器连接数情况
+ netstat -n | awk '/^tcp/ {++S[$NF]} END {for(a in S)print a, S[a]}'
+ 
+ 2 备份服务的技巧，打包/opt/web/wfweb 目录，但是又不想打包目录中的logs目录，将打包好的文件存放在/opt/backup目录下
+ tar -zcvf /opt/backup/strong.tar.gz \
+     -exclude /opt/web/wfweb/logs \
+     /opt/web/wfweb
+     
+ 3 查询线程数
+    ps -eLf | wc -l
+    pstree -p |wc -l
+   
+ 4 磁盘报警，清空最大文件
+   首先找到改文件
+     find /-type f -name "*log*"|xargs ls -lSh|more
+     find / -name '*log*' -size + 1000M -exec du -h {} \
+   将文件清空
+     echo "">a.log
+ 
+ 5  显示server.conf文件，但是屏蔽#开头的注释行
+   grep -v "^#" server.conf
+ 
+ 6 磁盘IO异常
+    查出导致磁盘IO异常高的进程ID
+    iotop -o // 查询正在写磁盘操作的所有进程ID信息
+    
+    如果各项写入指标很低，没有大量的写操作，进行磁盘本身排查，可以查看系统
+    dmesg 或者 cat /var/log/message
+    
   
