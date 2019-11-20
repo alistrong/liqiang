@@ -1,0 +1,30 @@
+1 序列化
+Java 序列化将一个对象转化为流，反序列化则是将对象流转化成Java对象的过程，序列化用于轻量级的持久化，通过Sockets传输
+可序列化的对象需要实现java.io.Serializable或者java.io.Externalizable接口
+以Serializable接口为例，它仅是一个标记接口，不包含任何具体实现方法，只是为了声明该java类的对象可以被序列化。实际序列化和反序列化工作是通过
+ObjectOutputStream和ObjectInputStream来现实的，ObjectOutputStream的writeObject方法可以把一个java对象写入流中，ObjectInputStream的readObject
+可以从流中读出一个java对象
+
+由于序列化遵循标准协议，所以可以轻易分析出流中的信息，并且可以篡改
+1 信息泄露
+2 数据篡改
+
+缓解措施
+1 对序列化的流数据进行加密
+2 在传输过程中使用TLS加密传输
+3 对序列化数据进行完整性校验
+
+java常见的序列化框架
+1 Kryo 速度快，序列化体积小，
+2 Hession, 默认支持跨语言，效率不高
+3 protobuf 速度快，需静态编译
+4 java 使用方便，可序列化所有类，但是速度慢，空间性能差
+
+2 IO
+java IO中包含字节流，字符流，
+
+ 输入流和输出流区分：有一个参照物，参照物就是存储数据的介质。把对象读入到介质中就是输入流，从介质中读出数据就是输出流
+ 
+ BIO :同步阻塞IO模式，数据的读取写入必须阻塞在一个线程内等待其完成。
+ NIO :newIO ,支持阻塞与非阻塞模式，以同步非阻塞为例， 
+ 
