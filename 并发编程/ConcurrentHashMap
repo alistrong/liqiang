@@ -1,0 +1,65 @@
+背景：
+   多线程环境下，使用HashMap进行put操作会引起死循环，导致 CPU利用率接近100%,所以在并发情况下不能使用HashMap
+   
+   先简单介绍一下HashMap的原理
+   底层是基于数据+链表组成的，jdk1.7和1.8具体实现稍有不同（由于hash冲突导致链表越来越长，查询效率低，O（n）），先介绍几个核心的成员变量
+   1 初始化桶大小，底层是数组，所以这是数组默认的大小 //通常建议能预估HashMap大小，减少扩容带来的性能损耗
+   2 桶最大值，
+   3 默认的负载因子0.75
+   4 table真正存放数据的数组
+   5 当链表长度大于（8）时，转成树
+   6 当哈希表扩容时，发现链表场长度小于（6）时，退化成链表
+   7 转成树之前，判断总容量大于(64）时，才发生转换
+   
+   HashTable使用synchronized来保证线程安全，但在线程竞争激烈的情况下HashTable的效率低下
+   
+   
+由此引出假如容器中有多把锁，一把锁相当于锁住一部分数据，那么当多线程访问容器不同数据时，线程间不会存在竞争，从而提高并发访问效率
+ConcurrentHashMap使用锁分段技术，将数据分成一段一段的存储，然后每一段分配一个锁，当一个线程占用锁访问其中一段数据时，其他段的数据也能被其他线程访问
+有些方法需要跨段，比如size()和containsValue()，他们需要锁定整个表，这就需要按顺序锁定所有段，操作完毕，又顺序释放所有段的锁。
+
+ConcurrentHashMap是由Segment数组结构和HashEntry数组结构组成。Segment是一种可重入锁ReentrantLock，HashEntry则用于存储键值对数据
+segments       table         HashEntry
+[]------------> []---------->[]->[]
+[]              []
+[]              []
+[]              []
+
+应用场景：
+  当一个大数组在多个线程共享时可以考虑释放将它分成多个节点，避免大锁，并可以考虑通过hash算法进行一些模块定位。
+
+源码解读：
+
+final Segment[] segments;
+ConcurrentHashMap允许多个读操作并发进行，读操作不需要加锁，是靠HashEntry几乎是不变的，HashEntry代表每个hash链中的一个节点
+static final class HashEntry<K,V>{
+    final K key;
+    final int hash;
+    volatile V value;
+    volatile HashEntry next;
+}
+
+对于1.7版本put方法
+
+1 先通过key定位到Segment，
+2 trylock()?null:scanAndLockForPut() //尝试获取锁，如果获取失败表示有其他线程存在竞争，利用scan进行自旋获取锁
+3 deal // 1 通过key的hashCode定位到HashEntry, 2 遍历HashEntry，判断key是否相等，相等则覆盖，3 如果为空，创建hashEntry加入Segment，同时判断扩容
+4 unlock();
+
+get逻辑
+
+1 将key 通过Hash之后定位到具体的Segment，再通过一次Hash定位到具体元素上
+ 由于HashEntry的value是volatile修饰的，保证内存可见性，每次获取都是新值，整个过程都不需要加锁
+ 
+1.8 改进地方 
+抛弃了原有的Segment分段锁，采用CAS+synchronized来保证并发安全性
+
+put方法
+1 根据key计算hashcode
+2 判断是否需要初始化
+3 f即为当前key定位出的Node，如果为空可以写入数据，利用CAS尝试写入，失败则自旋保证成功
+4 如果当前位置hashcode == MOVED == -1 则需要扩容
+5 如果都不满足，则利用synchronized写入数据
+6 数据大于阈值，转成红黑树
+
+
