@@ -1,0 +1,53 @@
+ThreadLocal
+ThreadLocal为java并发提供了一个新的思路，它用来存储Thread的局部变量，从而达到各个Thread之间的隔离运行，但是用不好导致内存泄露
+
+先说内存泄露原因探索
+ThreadLocal的内部类ThreadLocalMap中的Entry的设计
+Entry继承了WeakReference<ThreadLocal<?>>,即Entry的key是弱引用，所以Key会在垃圾回收的时候被回收掉，而key对应的value则不会被回收，从而导致key为null
+但是value有值，而key为空而value有值，这个value是无效数据，久而久之，value累加就会导致内存泄露
+
+static class ThreadLocalMap{
+    static class Entry extends WeakReference<ThreadLocal<?>>{
+        Object value;
+        Entry(ThreadLocal<?> k,Object v){
+            super(k);
+            value = v;
+        }
+    }
+}
+
+
+如何解决内存泄露问题
+每次使用完ThreadLocal都调用它的remove()清除数据，因为remove会主动将当前的key和value（Entry）进行清除
+
+ThreadLocal的设计者考虑到这一点，当调用get()方法时，判断null，就调清除方法（将value赋值null）等待下次GC释放空间，这种只是尽可能避免内存泄露，但不会
+完全解决问题，极端情况下，只创建ThreadLocal但不调用get,set,remove，所以最能解决问题的方法就是手动调用remove方法
+
+
+
+ThreadLocal使用及结构
+
+每个线程都有一个对应的threadLocals对象（ThreadLocalMap类型），一种特殊的Map,它的key值就是我们的ThreadLocals实例，value就是我们设置的值
+
+ThreadLocal<String> name = new ThreadLocal<String>();
+
+thread1.set("线程1name"); thread1.get();
+thread2.set("线程2name"); thread2.get();
+
+ThreadLocal<Integer> age = new ThreadLocal<Integer>();
+thread1.set(1);
+thread2.set(2);
+
+存储结构
+thread1下面有个ThreadLocalMap对象
+key  value
+name  线程1name
+age   1
+
+thread2下面有个ThreadLocalMap对象
+key     value
+name    线程2name
+age     2
+
+
+
