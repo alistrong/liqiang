@@ -19,3 +19,16 @@ increment(){
 3 当更新的位置的元素为空时插入新的cell元素，否则在该位置进行CAS操作，CAS失败且数组大小没有超过核数就扩容cells数组。
 
 总体：相对于对单个变量的CAS操作，分散为对数据cells中多个元素CAS操作，取值时进行求和。
+
+
+AtomicInteger
+
+private volatile int value
+public AtomicInteger(int initialValue){
+    value = initialValue;
+}
+
+private static final Unsafe unsafe = Unsafe.getUnsafe();
+private static final long valueOffset;
+
+自旋+CAS 
