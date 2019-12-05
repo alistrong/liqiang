@@ -1,0 +1,102 @@
+类似于 高级双指针技巧
+
+问题1 最小覆盖子串
+
+给定一个字符串S和字符串T，求在字符串S中找出包含T所有字母的最小子串
+
+S = "AD0BEC0EDBANC" , T ="ABC"
+res "BANC"
+
+滑动窗口思路如下：
+1 我们在字符串S中使用双指针的左右指针技巧，初始化left=right=0,把索引闭区间[left,right]称为一个窗口
+2 我们先不断增加right指针扩大窗口，直到窗口满足条件
+3 我们停止增加right,转而增加left指针 缩小窗口，直到窗口中的字符串不再满足要求，（在每次增加left时，更新结果）
+4 重复2,3，直到right到达S的尽头
+
+伪代码
+
+String find(String s,String T){
+    int left = 0;
+    int right = 0;
+    String window;
+    while(right<s.lenght){
+        window.add(s[right]);
+        right++;
+        while(满足){
+            res = minLen(res,window);
+            window.remove(s[left]);
+            left++;
+        }
+    }
+    return window;
+}
+
+详细代码
+
+String s,t
+int left,right =0;
+String res = s;
+
+Map<Char,Integer> window;
+Map<Char,Integer> needs;
+for(Char c : t) needs[c]++;
+
+int match = 0;
+
+while(right<s.size()){
+    char c1 = s[right];
+    if(needs.contains(c1)){
+        window[c1]++;
+        if(window[c1] == needs[c1]){
+            match++;
+        }
+    }
+    right++;
+    while(match == needs.size()){
+        res = minLen(res,window);
+        char c2 = s[left];
+        if(needs.contains(c2)){
+            window[c2]--;
+            if(window[c2] < needs[c2]){
+                match--;
+            }
+        }
+        left++;  
+    }
+}
+return res;
+
+
+通用套路
+
+int left=0,right=0
+
+while(right<s.size()){
+    window.add(s[right]);
+    right++;
+    while(valid){
+        window.remove(s[left]);
+        left++;
+    }
+}
+
+
+问题2 无重复最长子串
+
+int lengthLongestSubString(String s){
+    int left=0,right=0;
+    Map<Charactor,Integer> window;
+    int res = 0;
+    while(right<s.size()){
+        char c1 = s.charAt(right);
+        window[c1]++;
+        right++;
+        while(window[c1]>1){
+            char c2 = s[left];
+            window[c2]--;
+            left++;
+        }
+        res = max(res,right-left);
+    }
+    return  res;
+}
