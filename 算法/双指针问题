@@ -4,3 +4,64 @@
 一般初始化指向链表的头结点，前进时快指针fast在前，慢指针slow在后，
 
 问题1 判断链表是否有环
+
+boolean hasCycle(ListNode head){
+    if(head == null ||head.next == null){
+        return false;
+    }
+    ListNode fast = head;
+    ListNode slow = head;
+    while(fast!=null && fast.next !=null){
+        fast = fast.next.next;
+        slow = slow.next;
+        if(slow == fast){
+            return true;
+        }
+    }
+    return false;
+}
+
+问题2 已知链表有环，返回环的起始位置
+
+boolean hasCycle(ListNode head){
+    ListNode fast = head;
+    ListNode slow = head;
+    
+    while(fast!=null && fast.next !=null){
+        fast = fast.next.next;
+        slow = slow.next;
+        if(slow == fast){
+            break;
+        }
+    }
+    ListNode t = head;
+    while(t!=slow){
+      t = t.next;
+      slow = slow.next;
+    } 
+    return t; 
+}
+
+问题3 寻找链表倒数第K个元素
+
+ListNode fast = head;
+ListNode slow = head;
+int i=0;
+while(i<k){
+    fast = fast.next;
+}
+while(fast!=null){
+    slow = slow.next;
+    fast = fast.next;
+}
+return slow;
+
+
+2 左右指针 ，一般情况左指针 i=0,右指针 j= lenght-1;
+
+1 二分查找
+
+2 两数之和
+
+3 反转数组
+
