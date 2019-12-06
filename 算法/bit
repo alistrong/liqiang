@@ -43,3 +43,6 @@ public static int[] get(int nums[]){
 不使用辅助变量的前提下交换两个数：x = x ^ y; y = x ^ y ; x = x ^ y;
 
 2的n次方：
+
+n&n-1, 作用是可以消除数字n的二进制表示中最后一个1.
+
