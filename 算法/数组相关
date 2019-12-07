@@ -1,0 +1,54 @@
+1 前缀和
+
+问题1 求解所有和是K的子数组
+
+针对上述问题，最笨的方法得到所有子数组，然后判断和是否是K
+如何得到子数组的和呢?nums[i...j], 即sum(i,j)，显然不想每次都去计算nums[i]+...+nums[j],有没有O(1)得到和呢，由于引出前缀和
+
+前缀和是这样的，对于一个数组，开辟一个空间去存储前缀和。
+
+int preSum[] = new int[nums.length+1];
+preSum[0] = nums[0];
+for(int i=1;i<nums.length;i++){
+   preSum[i] = preSum[i-1] + nums[i]; 
+}
+
+即preSum[j] 表示nums[0]+....+nums[j],那么nums[i...j] = preSum[j] -preSum[i] ,不再需要遍历数组
+则解决方法如下：
+
+for(int i=1;i<=nums.lenght;i++){
+    for(int j=0;j<i;j++){
+        if(preSum[i]-preSum[j] == k){
+           res++;
+        }
+    }
+}
+
+时间复杂度 O(n^2) 空间复杂度O(n)
+
+
+看看内存循环，相当于找 preSum[i]-k 是否存在preSum[x]中 即preSum[j] =preSum[i] -k
+
+优化思路：用hash表记录 前缀和和前缀和出现的次数
+
+int subarraySum(int[] nums, int k) {
+    HashMap<Integer,Integer> preSum = new HashMap<>();
+    int res = 0;
+    preSum.put(0, 1);
+    int sum0i=0;
+    for(int i=0;i<nums.length;i++){
+        sum0i+ = nums[i];
+        int sum0_j = sum0_i - k;
+        if(preSum.contains(sum0_j)){
+            res+=preSum.get(sum0_j);
+        }
+        preSum.put(sum0i, preSum.getOrDefault(sum0_i, 0) + 1);
+    }
+    return res;
+}
+
+
+
+这种数组区间的问题，可以借助前缀和思路，另外借助hash表去优化循环。
+
+
