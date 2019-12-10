@@ -1,0 +1,63 @@
+JVM内存分为
+1 程序计数器，线程私有，当前线程所执行字节码的行号指示器，是唯一java虚拟机的没有规定OutOfMemoryError
+
+2 java虚拟机栈，生命周期与java线程执行结果相同，每个线程都有自己的一个虚拟机栈，栈中的结构是栈帧，当调用一个方法时，会为方法创建一个栈帧。
+     栈帧结构主要包括操作数栈，局部变量表，方法出口
+     线程请求的栈深度大于虚拟机规定的栈深度，则报StackOverFlowError,如果栈空间动态扩展，申请不到足够内存，报OutOfMemoryError
+     
+3 本地方法栈，与本地方法栈类似，区别在于java虚拟机栈主要执行java类方法，本地方法栈主要执行native方法
+
+上面都是线程私有的
+
+4 堆，java虚拟机管理内存最大的一块区域，堆主要存放对象实例和数组，分为新生代，老年代，新生代有分为Eden和Survivor区，
+     堆主要是GC关心的区域，当堆空间不足，无法完成对象分配时，会报OutOfMemoryError错误。  -Xmx(最大值), -Xms（最小值）
+     
+5 方法区，方法区是虚拟机区域的一种规范，HotSpot是使用永久代实现了方法区
+         主要存放类信息，静态变量和常量。
+         回收对象主要是一些无用的类和常量
+         内存空间不足，也会报OutOfMemoryError
+         
+JVM运行原理
+
+public class JVMCase{
+    //常量
+    public final static String MAN_SEX_TYPE = "man";
+    //静态变量
+    public static String WOMAN_SEX_TYPE = "woman";
+    public static void main(String []args){
+        Student stu = new Student();
+        stu.setName("mick");
+        JVMCase jvmcase = new JVMCase();
+        //静态方法
+        print(str);
+        //非静态方法
+        jvmcase.sayHello(stu);
+    }
+    //静态方法
+    public static void print(Student stu){
+        System.out.println(stu.name);
+    }
+    //非静态方法
+    public void sayHello(Student stu){
+        System.out.println(stu.name);
+    }
+}
+Class Student{
+    String name;
+    get()
+    set()
+}
+
+处理过程：
+1 JVM向操作系统申请内存，JVM第一步通过参数配置或者默认配置申请内存空间，
+2 JVM获取内存空间后，根据具体配置参数分配具体堆，栈，方法区内存大小
+3 class文件加载，验证，准备及解析，
+  3.1 准备阶段会为类的静态变量分配内存，初始化为系统的初始值
+  3.2.。。
+  
+4 进行最后的初始化，在这个阶段，JVM会执行构造器方法（静态变量赋值，静态代码块，静态方法）
+5 执行方法，启动main线程，执行main方法，首先在堆中创建一个student对象，对应对象引用存放栈中，
+6 创建JVMCase对象，调用非静态方法sayHello，方法入栈， 在调用静态方法print,再放入栈中，
+
+
+GC
