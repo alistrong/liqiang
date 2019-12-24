@@ -27,3 +27,6 @@ eg  public static String getString(String s1, String s2) {
     }
 此处 StringBuffer 和 StringBuilder性能差不多
 
+jvm调优（一般JVM优化和内存分配，gc等都相关，相辅相成）
+1 降低minor gc频率，如果新生代空间较小，很快分配完，
+2 调整堆内存减少full gc
