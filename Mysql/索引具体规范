@@ -1,0 +1,13 @@
+eg employees表中 建立联合索引（A,B,C）
+
+1 select * from employees where A = 'a' and B = 'b' and C = 'c';
+相当于全列匹配，所有列进行精准匹配，索引可以被用到，mysql查询优化器会自动调整where子句的条件顺序以使用适合的索引 。
+即where B = 'b' and C = 'c' and A = 'a' 也可以用到索引
+
+2 select * from employees where A = 'a';
+相当于最左前缀匹配原则，当查询条件精准匹配索引的左边连续一个或者几个列时，索引可以被使用到，但是只能用到一部分，即条件组成的最左前缀
+eg select * from employees where A = 'a' and C = 'c'，由于B条件没有，查询只用到索引的第一列，
+
+3 
+
+
