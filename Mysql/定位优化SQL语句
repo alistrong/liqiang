@@ -1,0 +1,13 @@
+explain查询sql执行计划
+
+type列：一个好的sql语句要打到range级别，尽量避免all级别
+key列：使用的索引列，
+rows列：扫描的行数，预估值
+
+
+
+
+
+
+
+
