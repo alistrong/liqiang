@@ -100,7 +100,54 @@ location块：一个server块可以配置多个location块
 这个主要是基于nginx服务器接收到的请求字符串（server_name/url）对虚拟主机名称（也可以是ip别名）之前的字符串（/url）进行匹配，对特定请求进行处理
 
 
+几个简单nginx配置实例
 
+1 反向代理
+1.1 访问test.com 直接跳转到自己的机器 127.0.0.1:8080
+
+server{
+    listen   80;
+    server_name  localhost
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+    }
+}
+
+1.2 根据访问的路径跳转到不同端口的服务中
+访问http://127.0.0.1/java/ 跳转到127.0.0.1:8080
+访问http://127.7.7.1/egg/ 跳转到127.0.0.1:8081
+
+服务器启动两个Tomcat，每个Tomcat对应一个端口号
+
+server{
+    listen   80;
+    server_name   localhost;
+    
+    location ~ /java/ {
+        proxy_pass http://127.0.0.1:8080
+    }
+    
+    location ~ /egg/ {
+        proxy_pass http://127.0.0.1:8081
+    }
+}
+
+2 负载均衡
+ 是由proxy模块和upstream模块搭配实现的，
+
+http{
+    upstream myserver{
+        server localhost:8080;
+        server localhost:8081;
+    }
+    
+    server{
+        listen  80;
+        location / {
+            proxy_pass http://myserver;
+        }
+    }
+}
 
 
 
