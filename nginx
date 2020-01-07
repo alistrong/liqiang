@@ -36,4 +36,75 @@ tomcat ：是一个application server,更准确来讲是一个Servlet容器。�
        应用服务器是一个应用执行的容器，支持开发语言的运行，保证应用能够在应用服务器上正常运行。
 nginx本身不支持生成动态页面，但是他们可以通过其他模块支持，通常关注http协议层面的传输和访问控制，所以有代理，负载均衡等功能
 
+下面重点讲一下nginx的配置文件
+nginx.conf配置文件主要分成三部分：
+
+---全局块
+---Events块
+---Https块
+
+简单的语法：
+配置文件由指令和指令块构成
+每条指令以分号结尾，指令和参数间以空格符分割
+指令块以大括号{}将多条指令组织在一起
+include语句允许组合多个配置文件以提高可维护性
+使用#添加注释 使用$添加变量
+
+--全局块--
+全局配置部分用来配置对整个server都有效的参数，整体运行的配置指令，主要包含以下：
+1 配置运行nginx服务器的用户（组），
+2 worker process数，
+3 进程PID存放路径
+4 日志存放路径和类型
+
+示例：
+user nobody;
+worker processes 4;
+error_log /data/nginx/logs/error.log notice;
+
+--events块--
+这块涉及的指令主要影响Nginx服务器与用户的网络连接，常用的设置包括以下：
+1 是否开启多个work process 下的网络连接进行序列化
+2 是否允许同时接受多个网络连接
+3 选取那种事件驱动模型来处理连接请求
+4 每个work process 可以同时支持的最大连接数
+
+示例：
+events{
+    worker_connections 1024;
+}
+
+--Https块--
+是nginx服务器配置中最频繁的部分，代理，缓存和日志定义等绝大多数功能和第三方模块的配置都在这里。 HTTP块包括HTTP全局块、Server块
+
+1 HTTP块
+ 包括文件引入，MIME-TYPE定义，日志自定义，连接超时时间，单链接请求数上限等。
+ http{
+     include  mine.types;
+     default_type   application/cotet-stream;
+     sendfile  on;
+     keepalive_timeout  65;
+ }
+ 
+ 2 Server块
+ 这块和虚拟主机有关系，每个Http块包括多个Server块，每个Server块相当于一个虚拟主机
+ 每个server块分为全局Server块，以及可以同时包含多个location块
+ 
+ 全局server块：被叫做 虚拟服务器 部分，它描述的是一组根据不同server_name指令逻辑分割的资源，这些虚拟服务器响应HTTP请求，因此都包含在HTTP部分。
+ server{
+     listen 80;
+     server_name localhost
+ }
+
+location块：一个server块可以配置多个location块
+这个主要是基于nginx服务器接收到的请求字符串（server_name/url）对虚拟主机名称（也可以是ip别名）之前的字符串（/url）进行匹配，对特定请求进行处理
+
+
+
+
+
+
+
+
+
 
