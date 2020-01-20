@@ -1,0 +1,17 @@
+kafka
+1 topic主题：类似于关系型数据库中表的概念，是一个逻辑概念，对于消费方，只需要消费对应的topic主题即可。
+2 partition分区：在服务器中表现就是一个目录，一个主题下有多个分区，这些分区存储在不同的服务器上，可以提高性能，相当于多线程处理
+                 分区有单点故障问题，因此为每个分区设置副本数；分区的编号从0开始。
+kafka集群架构
+机器1（topicA-P1）
+机器2（topicA-P2）
+机器3（topicA-P3）
+kafka在0.8版本之前是没有副本的机制的，机器宕机时会出现数据丢失，尽量避免使用。
+
+副本，leader,follower
+
+机器1（topicA-P1(leader) ,topicA-P2,topicA-P3）
+机器2（topicA-P2(leader),topicA-p1,topicA-p3）
+机器3（topicA-P3(leader),topicA-p2,topicA-P1）
+
+生产者在发送数据时，是直接往leader partition发数据的，follower回去leader那里自行同步数据，消费数据时，也是从leader那里消费。
