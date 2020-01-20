@@ -15,3 +15,22 @@ kafka在0.8版本之前是没有副本的机制的，机器宕机时会出现数
 机器3（topicA-P3(leader),topicA-p2,topicA-P1）
 
 生产者在发送数据时，是直接往leader partition发数据的，follower回去leader那里自行同步数据，消费数据时，也是从leader那里消费。
+
+Consumer group 消费组
+我们在写消费数据时，会指定group-id,这个id表示消费组的名字，
+consumer group:a
+    consumerA
+    consumerB
+    consumerC
+ 多个消费者并行消费信息，不会消费到同一信息。
+ 
+ kafka是主从架构模式，主节点称为controller，其他都是从节点，controller配合ZK管理整个集群。
+ 所有的broker机器启动时，会往ZK里注册信息，目的是选举出一个controller（选举过程简单粗暴，谁先谁当）
+ 成为controller之后监听ZK里面的目录
+ 例如有一个目录/brokers/ ,从节点往这个目录下注册（创建属于自己的子目录），一般是自己id编号，/brokers/1,2,3
+ 注册时各个节点暴露自己的主机名，端口号等信息。此时controller节点通过监听机制，读取到注册过来的从节点信息。生成集群的元数据信息。同时把这些信息分发给
+ 其他服务器，让其他服务器感知信息存在。
+ 其中一个场景：我们创建一个主题（即在ZK上新建一个目录）kafka会把分区方案生成在这个目录中，此时controller监听到这一改变，同步这个目录的元数据，然后下发
+ 给它的从节点，
+ 
+ 
