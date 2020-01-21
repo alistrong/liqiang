@@ -1,0 +1,21 @@
+rocket mq 基于netty扩展实现高性能网络通信
+1 首先 作为broker而言，会有一个Reactor主线程，这个线程就负责监听某个网络端口，
+
+producer ---建立TCP长连接--->【端口】<---监听---reactor主线程
+此时producer与broker之间建立了TCP长连接
+
+broker是用什么与producer之间建立长连接呢？ socketchannel
+目前producer与broker之间通过socketChannel建立了长连接，然后producer通过socketChannel给broker发送数据
+此时broker那个线程负责从socketChannel获取消息呢
+Reactor线程池，默认3个线程，Reactor主线程建立好的每个socketChannel都会交给reactor线程池中的一个线程去监听处理，
+接着Reactor线程从SocketChannel读取一个请求，这个请求在正式处理之前需要经过一些预处理（ssl加密验证，编码解码等），这时候需要引入新的概念，
+Worker线程池，默认8个线程，reactor收到请求会交给worker线程池中的一个线程处理，
+当worker线程处理完预处理工作后，需要交给真正的业务线程去处理
+
+至此整个过程完毕
+Reactor主线程在端口上监听Producer建立连接的请求，建立长连接
+Reactor线程池并发的监听多个连接的请求是否到达
+Worker请求并发的对多个请求进行预处理
+业务线程池并发的对多个请求进行磁盘读写业务操作
+之间互相不影响，高并发高性能，
+
