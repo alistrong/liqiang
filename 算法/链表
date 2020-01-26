@@ -1,1 +1,40 @@
-？？
+1 给定单链表头指针和节点指针，O（1）删除该节点
+
+通过当前节点找到后面的节点，然后把后面节点的值赋给当前节点，然后删除后面的节点。
+如果指定节点是尾节点，还是需要通过遍历找到节点的前一个节点，赋值为null。
+
+2 链表反转
+
+递归方法：
+public Node invert(Node head){
+    if(head.next == null){
+        return head;
+    }
+    Node newHead = invert(head.next);    
+    head.next.next = head;
+    head.next = null;
+    return newHead;
+}
+
+非递归方法：
+Node pre = head.next;
+Node cur = pre.next;
+while(cur!=null){
+   Node next= cur.next;
+   cur.next = pre;
+   pre = cur;
+   cur = next;
+}
+head.next = pre;
+
+3 寻找第K个节点
+
+快慢指针：快慢指针同时指向head的后继节点；然后快指针先走K-1歩，指到第K个节点；然后快慢指针同时走，直到快指针走到尾部，此时slow指针就是我们要找的。
+
+4 判断两链表是否相交及相交的第一个节点。要求空间复杂度O（1）
+
+ 先求出两个链表的长度L1和L2,然P1指针先走L1-L2歩，然后两个指针不断向后遍历，然后每走一步，判断是否相等，相等即为结果。
+ 
+5 判断是否有环及入环的节点。
+
+
