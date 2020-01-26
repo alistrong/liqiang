@@ -1,0 +1,21 @@
+ 背景：流水未分库分表的大表，数据量950w,分页查询使用limit语句
+ select a,b,c from table where 条件 limit 0,10;
+ 
+ 优化后语句：
+ select a,b,c from main_table right join (select 主键 from table where 条件 limit 0,10) temp_table on temp_table.a = main_table.a;
+ 
+ 我们知道limit offset rows，当offset很大时，效率很低，
+ 我们先看一下select * from table where 条件 limit 300000,10 的查询过程;
+ 
+ 查询索引叶子节点数据，然后根据叶子节点的主键值去聚簇索引上查询需要的所有字段值。
+ 查询300010次索引节点，然后300010次聚簇索引的数据，然后将结果过滤掉前300000个，最后取出最后10条记录，即mysql耗费了大量随机I/O在查询聚簇索引的数据上。
+ 即由300000次聚簇索引查询是无用的。
+ 
+ 我们设想为啥不直接先根据二级索引过滤掉只剩10条主键索引，然后根据聚簇索引找到最终10条的数据集呢？
+ 如果select * 中的* 只是包含主键，则mysql会先执行offset偏移操作，根据后面的主键索引读取最终的数据块。
+ 对于需要查询所有字段的情况，二级索引可以找到主键值，但还需要根据聚簇索引读数据块获得其他字段，因此mysql会先读取数据块内容，然后执行offset偏移操作。
+ 
+ 有实验证实上述情况：
+ mysql 有buffer pool,存放最近访问的数据页，执行前后两个sql语句，观察buffer pool里面的数据，发现优化后的pool内容较少。
+ 
+ 整体优化思路：先找出偏移后的主键，然后根据主键索引查找数据块。
