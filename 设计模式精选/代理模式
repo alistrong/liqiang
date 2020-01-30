@@ -1,0 +1,132 @@
+给某一对象提供一个代理对象，并由代理对象控制对原对象的引用，类似房屋中介的角色。
+
+实际对象 -------》代理对象《---------调用方使用方
+
+
+public class NatureMan{
+    public void eat(){
+        System.out.println("eat");
+    }
+    public void drink(){
+        System.out.println("drink");
+    }
+}
+
+写了扩展类，有扩展功能，又想保留上面类的能力，使用继承
+public class ZhangSan extends NatureMan{
+    public void study(){
+        System.out.println("study");
+    }
+}
+现在如果ZhangSan的study变了，咋弄，根据开闭原则，不建议直接修改原有类的方法，因此需要继承类重新对应方法
+public class LiSi extends ZhangSan{
+    public void study(){
+        System.out.println("lisi study");
+    }
+}
+从上面几歩迭代看出，利用继承方式实现功能扩展，灵活性不好，臃肿。因此引出代理模式,（即利用代理对象去集成对应的功能扩展）
+
+public interface  NatureMan{
+     public void eat();
+     public void drink();
+}
+
+public class MaYun implements NatureMan{
+    @Override
+    public void eat(){
+        System.out.println("my eat");
+    }
+    @Override
+    public void drink(){
+        System.out.println("my hh");
+    }
+    public void role(){
+        System.out.println("alibaba");
+    }
+}
+定义一个mayun代理类
+public class MaYunProxy implements NatureMan{
+    private MaYun maYun;
+    public ProxyMaYun(MaYun  mayun){
+        this.maYun = mayun;
+    }
+    @Override
+    public void eat(){}
+    @Override
+    public void drink(){}
+    
+    public void role(){
+        maYun.role();
+    }
+}
+
+//静态代理  耦合度强，每个服务都要创建一个代理类，如果接口有修改，对应代理类也要修改
+MaYun maYun = new MaYun();
+ProxyMaYun proxy = new ProxyMaYun(maYun);
+proxy.role();
+
+由此引出动态代理
+动态代理：不需要手动创建代理类，只需编写一个动态处理器即可，真正的代理对象由JDK运行时创建。
+JDK动态代理，里面会涉及反射
+
+Proxy类 其中newProxyInstance() 生成代理对象及实例的作用,方法的几个重要参数
+ClassLoader loader； 创建代理类的类加载器
+Class<?>[] interface; 代理类的接口
+InvocationHandler; 生成代理对象,这个是自己要写的，其中有一个invoke方法，
+invoke(Proxy 被代理对象，Method 方法对象的引用， Object[] 调用方法的参数)；
+以连接池为例说明动态代理
+
+public class JDBCUtil{
+    private static String url = "dddd";
+    private static String userName= "root";
+    private static String passWords = "23423";
+    private Connection  conn = null;
+    static {
+        Class.forName("com.mysql.jdbc.Driver");
+        conn = DriverManager.getConnection(url,userName,passWords);
+    }
+    
+    public static Connection getConnect(){
+        return conn;
+    }
+    public static void release(Connection conn){
+        if(conn!=null && conn.isClosed()){
+            conn.close();
+        }
+    }
+}
+
+public Class DataLinkPool extends DataSource{
+   LinkedList<Connection> pool =new LinkedList<>();
+   public DataLinkPool(){
+       for(int i=0;i<10;i++){
+           pool.addLast(JDBCUtil.getConnect());
+       }
+   }
+}
+
+//上面连接池的例子不熟悉，改以RPC为例说明动态代理
+RPC背景：服务分机器部署，经常会遇到自己调用别人的服务，怎样封装通信细节让用户像调用本地服务一样调用远程服务呢，java使用动态代理
+1 jdk动态代理
+2 字节码生成
+public class PRCProxyClient implements InvactionHandler{
+    private Object obj;
+    public PRCProxyClient(Object obj){
+        this.obj = obj;
+    }
+    //得到被代理对象
+    public static Object getProxy(Object obj){
+        return Proxy.newProxyInstance(obj.getClass.getClassLoader(),obj.getClass.getInterfaces(),new PRCProxyClient(obj));
+    }
+    
+    //调用方法执行
+    public Object invoke(Object proxy,Method method,Object[] args){
+        Object result = null;
+        //逻辑执行
+        return result;
+    } 
+    
+}
+
+实现一个RPCProxyClient代理类，代理类的invoke方法中封装了与远程服务通信的细节，消费方首先从PRCProxyClient获取服务方的接口方法
+
