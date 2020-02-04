@@ -34,7 +34,11 @@ class------>BeanDefinition------->
 
 先看普通类的实例化过程 .java---->.class----->java对象
 再看spring bean的实例化过程：
-java----->class------>
+java----->class------>并不是直接new对象放到spring容器中，因为有些是原形类型，有些是懒加载，而是把类的一些信息拿到放入到beanDefinition子类对象中。
+然后把对应的BeanDefintion对象放入到map里，-------> 然后遍历map拿到类的一些信息进行new出来对象放入到单例池中。
+实例化过程中，在生成BeanDefinition和new出对象之间spring预留了一个扩展方法接口，用于spring扩展。
+
+
 
 
 
