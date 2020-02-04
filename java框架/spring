@@ -2,4 +2,39 @@ spring
 问题1 循环依赖--属性自动注入
 上述问题会涉及到spring bean的生命周期及bean实例化的大概过程
 
+什么是循环依赖
+Class A{
+  @Autowired
+  private B b;
+}
+
+Class B{
+  @Autowired
+  private A a;
+}
+
+//初始化spring容器
+AnnotiationConfigApplicationContext ac = new AnnotationConfigApplicationContext(AppConfig.class);
+//获取对象实例
+ac.getBean(A.class);
+
+spring 单例模式下默认支持循环依赖，
+在类A中如何把B类注入进来的？依赖注入是什么时候完成的？
+单例情况下，是在初始化spring容器时完成依赖注入
+原形情况下，是在getBean时完成依赖注入
+
+在初始化spring容器过程中做了很多事情，其中包括bean实例初始化，而在bean实例初始化（bean生命周期）也包括很多步骤1.2.3.。。。n，即需要了解在第几步完成
+属性注入的呢？
+
+下面看spring如何初始化一个bean的过程：
+首先理解bean和java对象的概念
+bean一定是java对象，但是java对象不一定是bean对象。
+
+class------>BeanDefinition------->
+
+先看普通类的实例化过程 .java---->.class----->java对象
+再看spring bean的实例化过程：
+java----->class------>
+
+
 
