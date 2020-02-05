@@ -1,0 +1,15 @@
+tomcat加载启动springMVC .war包
+去spring-mvc.xml中basePackage = "com.bj58.***"
+
+去basePackage里扫描注解类 @Controller @Service....
+通过Class 反射去初始化这些类。然后放入IOC容器中。
+
+然后再处理特殊注解@Autowired @Resource
+根据这些类名去容器获取，然后赋值成员变量。
+对于private变量，先打开权限。
+
+寻找有声明路径的方法注解
+urlMap(key,method)（/user/getInfo, getInfo()method）
+method.invoke();从而url调用controller里面的对应方法。
+
+核心DispatcherSevlet
