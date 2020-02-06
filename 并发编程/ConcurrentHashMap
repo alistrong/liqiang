@@ -73,6 +73,12 @@ get逻辑
  
 1.8 改进地方 
 抛弃了原有的Segment分段锁，采用CAS+synchronized来保证并发安全性
+即根据key的hash值定位在数组中的位置，如果是null，则用CAS方式put进去，
+如果不是null,即有可能有hash冲突，有对应链表或者红黑树，则用synchronized关键字锁住头结点，进行尾插。
+
+对于1.8的size（）
+使用一个volatile修饰的关键属性baseCount记录元素个数，当插入或者删除数据时，通过addCount修改该字段。
+部分元素的个数变化保存在CounterCell[]数组中，最后通过累加baseCount和CounterCell数组的和得到最终的结果。
 
 put方法
 1 根据key计算hashcode
