@@ -60,8 +60,9 @@ bean实例化过程：
 
 涉及到的map缓存
 
-1 singletonObjects 单例池，也就是通俗意义上的spring容器
-2 singletonFactories 工厂对象，半成品所在地, why?可以对这个半成品进行加工升华，为什么需要升华加工半成品bean?代理，  可以处理aop。   
+1 singletonObjects 单例池，也就是通俗意义上的spring容器，单例对象只会实例化一次，需要缓冲池存放，原形模式不用。
+2 singletonFactories 工厂对象，可以解决循环依赖，提前暴露一个工厂即“半成品”，
+why?可以对这个半成品进行加工升华，为什么需要升华加工半成品bean?代理，  可以处理aop。   
 3 earlySingletonObjects 和1几乎一样，2级缓存删除出来，放入到3级缓存中。
 
 为啥弄了三级缓存？
