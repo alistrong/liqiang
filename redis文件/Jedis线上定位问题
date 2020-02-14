@@ -1,0 +1,31 @@
+背景：日志文件里报 JedisConnectionException Unexpected end of stream 
+      pool.getResource() error 
+      redis.clients.jedis.exceptions.JedisConnectionExcepion: Could not get a  resource from a pool
+//从堆栈信息里面得到 伸手向资源池索要对象时，没有拿到对象，就自己创建，最后体现在GenericObjectPool.create创建Jedis对象出错      
+我们看到了池化技术，先了解一下池化技术
+如果每次使用Redis客户端连接先创建jedis对象，连接Redis Server，这个过程会建立TCP连接，完成操作，断开TCP连接，遇到并发量大的请求，吃不消，
+如果使用了线程池，首先在资源池中初始化一定数量的对象，当有客户端请求达到时，从资源池获取对象，对象使用完成，丢回资源池，给其他客户端使用
+即复用池中的对象，避免分配内存和创建堆中的对象的开销，避免了因重复创建对象，进而避免了TCP连接的建立和断开的开销。
+Jedis内部使用的是Apache Common Pool2 开源工具
+
+先分析Redis客户端
+首先看一下资源池对对象管理的情况：
+1 从资源池获取对象，如果没有空闲对象调用Factory创建对象，2 创建完对象放到资源池中，返回给客户端使用
+3 使用完对象会调用return,首先内部先校验一些条件是否满足，验证通过，对象归还资源池
+4 如果条件验证不通过（比如资源池已关闭，对象状态不正确，超过最大空闲资源数），会从资源池中销毁对象
+
+核心配置属性：
+1 minIdle 资源池确保最少空闲的连接数
+2 maxIdle 资源池最大空闲连接数
+3 maxTotal 资源池最大连接数
+4 maxWaitMillis 当资源池连接使用尽后，调用者的最大等待时间，单位毫秒
+5 testOnBorrow 向资源池借用连接时，是否做连接有效性检测，无效连接会被移除，默认false，业务量很大时，建议为false，因为会多一次ping开销
+6 testOnCreate 创建新的资源连接后，是否做连接有效性检测，无效连接会移除
+7 testOnReturn 向资源池归还连接时，是否做连接有效性检测，。。。
+8 testWhileIdle 是否开启空闲资源检测
+9 bolckWhenExhausted 当资源池耗尽时，调用者是否等待， 为true时，maxWaitMills才生效
+
+
+Jedis客户端线程池参数：
+JedisPoolConfig 默认构造函数中将testWhileIdle参数设置为true，minEvictableIdleTimeMillis设置为60秒，
+每个30秒执行一次空闲资源检测，发现空闲资源超过60秒没使用，从资源池移除
