@@ -16,12 +16,45 @@ ServerSocket serverSocket = new ServerSocket();
 serverSocket.bind(new InetSocketAddress(9876));
 while(true){
     Socket socket = serverSocket.accept();//阻塞
-    socket.getInputStream().read(bs);
+    socket.getInputStream().read(bs);//阻塞
 }
 客户端发送数据
 Socket socket = new Socket();
 socket.connect(new InetSocketAddress(ip,port));
 socket.getOutPutStream.write("content".getBytes());
+
+//由于阻塞，没办法处理并发请求（一个线程只能处理一个请求连接），性能低
+改成NIO的模式
+List<SocketChannel> list = new ArrayList<SocketChannel>();
+ServerSocketChannel channel = new ServerSocketChannel.open();
+channel.bind(new InetSocketAddress(9876));
+channel.configureBlocking(false);
+while(true){
+    SocketChannle sc = channel.accept();
+    if(sc == null){
+        //没人连接
+        for(SocketChannel sc1:list){
+            if(sc1.read(byteBuffer)!=0){
+              //处理数据
+            }
+        }
+    }else{
+        sc.configrueBlocking(false);
+        list.add(sc);
+          for(SocketChannel sc1:list){
+            if(sc1.read(byteBuffer)!=0){
+              //处理数据
+            }
+        }
+    }
+
+}
+
+
+
+
+
+
 
 
 
