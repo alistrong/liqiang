@@ -4,6 +4,37 @@ IO与NIO的区别
    NIO是面向缓冲区的，且是非阻塞模式，一个线程从通道发送读取数据时，它仅能得到目前可用的数据，如果目前没有可用数据，就什么都不获取，而不是保持线程堵塞，
 所以直到有数据可以读取之前，该线程可以继续干其他事情。所以一个单独的线程可以管理多个输入和输出通道
 
+//详细介绍NIO
+buffer:
+负责数据存取，就是数组，支持各种类型的数据，如charBuffer，IntBuffer，比较常见的是ByteBuffer
+通过allocate分配获取缓冲区，ByteBuffer buf = ByteBuffer.allocate(1024);
+存入数据到缓冲区 put
+获取缓冲区的数据 get
+为了详细了解缓冲区的详细存取，需要了解缓冲区的属性
+1 capacity //容量，表示缓冲区中数据最大存储的容量，一旦声明不能改变。
+2 limit //界限，表示缓冲区中的可以操作数据的大小。limit后面的数我们不能进行读写
+3 position //位置，表示缓冲区正在操作数据的位置。 position=<limit<=capacity
+eg ：ByteBuffer buf = ByteBuffer.allocate(10);//先分配指定大小的缓冲区
+此时capacity=10, limit=10, position=0;
+
+String str= 'abcde';//往指定缓冲区写入数据,即写数据模式
+buf.put(str.getBytes()); 
+此时capacity=10, limit=10, position=5
+
+//读取刚才写入的数据，开启读数据模式（flip()）
+当执行完flip(),切换读写模式，此时capacity=10,limit=5(可以读取5个数据，后面不让读取),position=0;
+
+//开始读取数据
+byte byt[] =new byte[buf.limit()];
+buf.get(byt);
+此时capacity=10,limit=5,position=5;
+
+//可重复读数据 rewind(),position 又从0开始了，可以读了
+
+//清空 clear();  清空缓冲区，缓冲区的数据还在，但是数据已处在被遗忘状态，回到最初的状态。
+
+
+
 选择器selector:java NIO的选择器允许一个单独的线程来监控多个输入通道，也可以注册多个通道使用一个选择器，
 channel:NIO中通道，主要包括FileChannel,SocketChannel,ServerSocketChannel,DatagramChannel.既可以从通道读取数据，可以写数据到通道，可以异步读写
 buffer:与上述channel交互，从通道读入到缓冲区，从缓冲区写入到通道，本质是一块内存，被包装成NIO Buffer对象，过程如下：写入数据到Buffer,调用flip()方法
