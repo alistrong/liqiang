@@ -46,6 +46,18 @@ buf.get(byt);
 
 //channel详解：
 表示IO源与目标打开的连接，类似于传统的流，但是不能直接操作数据，与buffer交互
+主要实现类本地传输----FileChannel
+         网络传输----SocketChannel
+         网络传输----ServerSocketChannel
+         网络传输----DatagramChannel
+获取通道的方式：1 针对支持通道的类提供了一个getChannel方法，（1.1本地方法 FileInputStream，1.2 网络 socket,ServerSocket）
+               2  NIO.2针对各个通道提供了静态方法 open();
+               
+               
+阻塞与非阻塞
+
+
+
 
 
 选择器selector:java NIO的选择器允许一个单独的线程来监控多个输入通道，也可以注册多个通道使用一个选择器，
