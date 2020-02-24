@@ -49,6 +49,46 @@ void backtrack(int nums[],LinkedList<Integer> track){
     }
 }
 
+// 所有子集
+Vector<Vector<int>> res;
+Vector<Vector<int>> subSets(Vector<int> nums){
+    Vector<int> track;
+    backtrack(nums,0,track);
+    return res;
+}
+
+void backtrack(Vector<int> nums,int start,Vector<int> track){
+    res.push(track);
+    for(int i=start;i<nums.length;i++){
+        track.push(nums[i]);
+        backtrack(nums,i+1,track);
+        track.pop();
+    }
+}
+
+//输入两个数字 k,n 求[1...n]中k个数字的所有组合
+
+Vector<Vector<int>> res;
+Vector<Vector<int>> combine(int n,int k){
+    Vector<int> track;
+    backtrack(n,k,1,track);
+    return res;
+}
+void combine(int n,int k,int start,Vector<int> track){
+     if(track.size()==k){
+         res.push(track);
+         return;
+     }
+     for(int i=start;i<n;i++){
+         track.push(i);
+         backtrack(n,k,i+1,track);
+         track.pop();
+     }
+}
+
+//分析上面三个案例，
+子集和组合都要用start，来排除已经选择的数字，排列问题用contains判断是否已经选择
+
 回溯算法，时间复杂度不可能低于O(N!)，因为穷举整个决策树是无法避免的，这也是回溯算法的一个特点，不像动态规划存在重叠子问题可以优化，回溯算法就是纯暴力穷举
 ，复杂度一般很高。
 
