@@ -46,3 +46,36 @@ public static int[] get(int nums[]){
 
 n&n-1, 作用是可以消除数字n的二进制表示中最后一个1.
 
+数学计算：
+1 计算a的b次幂，然后取余c 即(a^b)%c，其中b是数组格式，不可用整数表示
+   问题1 如何处理数组问题：eg a^[1,5,6,4] = a^4 * a^[1,5,6,0] = a^4 * (a^[1,5,6])^10 ,即问题规模一点一点缩小
+   问题2 如何处理mod运算：对于（a*b）%c很可能在求余之前就溢出了，因此 (a*b)%c = ((a%c)*(b%c))%c
+   //对a的k次幂然后求模base
+   pow(int a,int k,int base){
+       a%=base;//对每个因子求模
+       int res = 1;
+       for(int i=0;i<k;i++){
+           res*=a;
+           res%=base;
+       }
+       return res;
+   }
+   从上面这道高效的题中抽离如何计算幂等的问题
+   a^b =  a * a^(b-1)   当b是奇数时
+       =  (a^(b/2))^2   当b是偶数时
+   对于^2这样的运算相当于折半计算，变成log级别的运算。
+   int pow(int a,int k){
+       if(k==0){
+           return 1;
+       }
+       if(k%2==0){
+           return pow(pow(a,k/2),2);
+       }else{
+           return pow(a,pow(a,k-1));
+       }
+   }
+   
+   
+   
+
+
