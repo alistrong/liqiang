@@ -3,7 +3,7 @@
    然后：根据命令 top -P -a pid 查看这个pid下面消耗CPU最大的线程 tid  (printf '%x\n' tid 得到tid对应的十六进制)
    最后：jstack pid|grep tid(十六进制)            jstack(查看当前所有线程的运行情况和线程当前状态)
    
-   jstack 文件：  1   死循环 
+   jstack 文件：  1   死循环 (比如，hashmap容器多线程并发读写，while条件不满足，共享变量不加锁)
                   2   wait()  Thread.State: WAITING
                   3   死锁    deadlock
                   4   等待IO  
