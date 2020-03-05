@@ -1,0 +1,54 @@
+1 lambda表达式
+简化匿名内部类的书写，相当于取代函数式接口，帮助我们书写简洁有效的代码
+常见的用法：
+Thread thread  = new Thread(new Runnable(){
+    @Override
+    public void run(){
+        System.out.println("dd");
+    }
+})
+简化为：
+Thread thread = new Thread(
+    ()->System.out.println("dd")
+)
+
+能够使用lambda表达式的依据是必须有函数式接口（内部只有一个抽象方法的接口）
+具体lambda表达式实现原理：通过invokedynamic指令实现，书写lambda表达式不会产生新的类，编译之后只有一个class文件，
+
+2 stream
+stream并不是某种数据结构，它只是数据源的一种视图，这里的数据源可以是数组，java容器或者I/OChannel等，通常不用手动创建，而是调用对应的工具方法，eg:
+Collection.stream(); Collection.parallelStream();
+stream有以下特定：
+1 为函数式编程而生，对stream的任何修改不会改变原来的数据源，
+2 可消费性，stream只能被消费1次，一旦遍历完成就失效，想要再次遍历需要重新生成。
+
+对stream的操作也分成两类
+1 中间操作：中间操作只是生成了一个标记了该操作的新stream，而且是惰性的，eg: filter() match()...
+2 结束操作：结束操作触发实际计算，计算发生时，会把所有中间积攒的操作以pipeline的方式执行，减少迭代次数，计算完成后stream失效 eg:forEach，max()
+区分中间还是结束可以从操作返回的结果中大概预测，一般返回stream的是中间操作，否则是结束操作。
+
+eg:
+Stream<String> stream = Stream.of("1","2","3","4");
+stream.forEach(str->System.out.println(str));
+stream.filter(str->str.length()==3);
+
+申请理解stream流水线：
+给个case，引出问题eg:
+int longestStringLengthStartingWithA
+        = strings.stream()
+              .filter(s -> s.startsWith("A"))
+              .mapToInt(String::length)
+              .max();
+上述case最直白的示例：一次迭代一次操作，经过三次迭代得到最终结果，效率太差，我们不用stream方式都可以在一次迭代后完成
+类库的实现着使用流水线（Pipeline）的方式巧妙的避免了多次迭代，其基本思想是在一次迭代中尽可能多的执行用户指定的操作
+
+性能来说
+元素简单操作处理遍历： stream性能不如直接for，但是多核并发性能还不错
+元素复杂操作处理遍历： stream性能和for差不多，多核stream更佳。
+
+总结：简单操作，直接for，复杂操作，可以用stream parallel
+
+
+
+
+
