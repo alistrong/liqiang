@@ -29,3 +29,13 @@ Jedis内部使用的是Apache Common Pool2 开源工具
 Jedis客户端线程池参数：
 JedisPoolConfig 默认构造函数中将testWhileIdle参数设置为true，minEvictableIdleTimeMillis设置为60秒，
 每个30秒执行一次空闲资源检测，发现空闲资源超过60秒没使用，从资源池移除
+
+//官网上有一定连接泄露的问题，在高版本已经修复
+问题：
+多线程问题导致的：
+A线程还没执行dataSource=null
+B线程获取到资源
+A线程执行，
+B线程因为dateSource=null导致永远不return.
+
+加锁并发控制
