@@ -1,4 +1,15 @@
-1 lambda表达式
+1 接口语义增强
+java8之前，接口只能包含抽象方法，当一个接口添加新的抽象方法时，所有实现该接口的类都需要重新实现这个新的抽象方法，向后不兼容，不方便，
+因此java8规定接口内部可以定义默认方法，可以默认方法用default标识，可以有具体的实现，对于多个接口都含有相同的函数名的接口，而有类实现这两个接口，对于
+这个同名的default方法，java规定实现类重新这个方法，并绑定具体调用哪个接口的默认方法。
+java8还规定了可以定义静态方法，static，有具体的方法实现。
+
+
+2 函数式接口（与lambda表达式关联很大）
+什么是函数式思想：就是函数可以作为另一个函数的参数
+函数式接口要求函数有且仅有一个抽象方法，可以用注解@FunctionalInterface标识
+
+3 lambda表达式
 简化匿名内部类的书写，相当于取代函数式接口，帮助我们书写简洁有效的代码
 常见的用法：
 Thread thread  = new Thread(new Runnable(){
@@ -15,7 +26,7 @@ Thread thread = new Thread(
 能够使用lambda表达式的依据是必须有函数式接口（内部只有一个抽象方法的接口）
 具体lambda表达式实现原理：通过invokedynamic指令实现，书写lambda表达式不会产生新的类，编译之后只有一个class文件，
 
-2 stream
+4 stream
 stream并不是某种数据结构，它只是数据源的一种视图，这里的数据源可以是数组，java容器或者I/OChannel等，通常不用手动创建，而是调用对应的工具方法，eg:
 Collection.stream(); Collection.parallelStream();
 stream有以下特定：
@@ -47,6 +58,13 @@ int longestStringLengthStartingWithA
 元素复杂操作处理遍历： stream性能和for差不多，多核stream更佳。
 
 总结：简单操作，直接for，复杂操作，可以用stream parallel
+
+性能优化上的改进：
+并发层面做了很多优化：
+Future：CompletableFuture
+StampedLock可用来替代ReadWriteLock
+性能更优的原子类：：LongAdder,LongAccumulator以及DoubleAdder和DoubleAccumulator；
+
 
 
 
