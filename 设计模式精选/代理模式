@@ -130,3 +130,9 @@ public class PRCProxyClient implements InvactionHandler{
 
 实现一个RPCProxyClient代理类，代理类的invoke方法中封装了与远程服务通信的细节，消费方首先从PRCProxyClient获取服务方的接口方法
 
+//java动态代理思想：
+为接口创建动态代理实例，不能对类创建动态代理，获取目标类的接口信息（利用反射机制），生成了一个实现接口的动态代理类（字节码），通过反射机制获取动态
+代理类的构造方法，然后通过反射机制获得动态代理类的构造函数，通过构造函数生成代理类的对象实例，调用方法前调用invocationHander去处理逻辑。
+
+AOP 面向切面编程，具体应用：日志记录，时间计算，缓存
+
