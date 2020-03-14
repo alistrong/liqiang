@@ -1,0 +1,28 @@
+【String】
+1 商品库存，问题回复点赞次数，类似这种计数场景，
+  set key count
+  decr key 1
+2 失效信息存储，redis具有ttl有效期，key-value可以设置过期时间
+  用户登录APP需要验证码，而验证码30秒有效，因此可以设置String，设置对应ttl
+【hash】
+1 对象级别的存储,一些对象信息的存储，商品信息
+  hmset user3 name zs age 18  key(user3)===>value{name:zs,age:18}
+  eg:淘宝购物车，用户所有的商品及对应的商品数量，
+  key(cartuserId) ==========>value(prod1:2,prod2:1)
+【list】
+list是按照插入顺序排序的字符串链表，头部尾部都可插入数据，双向链表，o(1)
+q:如何利用list实现栈：Lpush+Rpop
+             实现队列：Lpush+Lpop
+1 消息队列实现  
+  lpush key value //在队列头部添加元素
+  rpop key //移除列表最后一个元素
+2 最新上架的商品
+  
+【set】
+ 集合，与list不同，有去重的功能，有并，交，差集合的功能，
+ 1 存储用户感兴趣的商品信息，这样用户之间可以做一些比较处理，类似这种，相似关系好友，相同兴趣
+ 2 共同关注好友
+ 
+【zset】
+ 有序集合，排行榜常用，
+ key (zrank)  value(zs:1 ,ls:3,...)   
