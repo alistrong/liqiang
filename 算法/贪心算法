@@ -68,3 +68,43 @@ eg:[[1,2],[2,3],[3,4][1,3]] =====> 去掉[1,3]
           [--------]
              [---]
                [----------]
+
+首先选出终点最小的区间，然后再取下一个与这个区间不相交的最小的终点区间，一直循环取
+所以是按照区间的终点先排序
+public static int maxInv(int interval[]){
+    sort(interval)
+    int cur = 0;
+    int count=1
+    for(int i=1;i<interval.length;i++){
+        if(interval.start<cur.end){
+            count++;
+            cur= interval[i];
+        }
+    }
+    return interval.length-count;
+}
+
+这个问题可以考虑用动态规划来解：
+dp[i] 表示{0...i}之间最大的不重复区间
+dp[i]= max(dp[j])+1  {j<i & interval[j].end <interval[i].start}
+int compare(interval a,interval b){
+   return a.start>b.end?1:0;
+}
+public int maxInterval(int interval[]){
+    if(interval == null || interval.length==0){
+        return 0;
+    }
+    int dp[] =new int[interval.length];
+    dp[0]=1
+    for(int i=1;i<dp.length;i++){
+        int max = dp[i];
+        for(int j=0;j<i;j++){   
+            if(compare(interval[i],interval[j])){
+                max = dp[j]+1>max?(dp[j]+1):max;
+            }
+        }
+        dp[i]= max;
+    }
+    return interval.length-dp[interval.length-1];
+}
+
