@@ -9,3 +9,10 @@ java中的blocked状态是针对synchronized关键字来说的，一般是针对
 而waiting状态（object.wait()）一般是先获取到锁后，进去同步代码块后，由于某些业务条件不满足,即其他条件不满足，会进入到waiting状态
 像waiting,notify,notifyall这类方法，需要在同步代码块中调用，即拥有对应对象的同步锁，否则会跑出illegalMonitorStateException，表示调用这些方法，但是
 没有调用获取到对应对象的锁
+
+synchronized 的wait ,notify,notifyAll 与lock对应的condition中的await,signal,signalAll方法区别
+
+正常一个线程A获取同步锁（synchronized锁对象或者lock锁对象）,进入同步代码块，执行自己的逻辑，此时如何线程B想要同样进入同步块，想要阻塞等待，
+但是A线程执行过程中，由于某些业务条件，调用（object.wait方法，或者lock对应的condition的await方法）进入等待状态，此时等待需要释放锁对象，进入到所谓的
+等待队列，等待（notify或者signal）
+lock的condition有一个好处，就是同一把锁可以有多个条件，lock.newCondition (非空)lock.newCondtion(非满)，不同条件唤醒不同的等待队列。
