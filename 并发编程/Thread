@@ -1,0 +1,11 @@
+java线程的几个状态
+new 状态：初始构建，没有调用start方法
+runnable:运行状态，
+blocked:阻塞状态，一般是调用synchronized获取锁阻塞，
+waiting:等待状态，表示当前状态需要等待其他线程做出一些特定动作（中断或通知）
+terminal:终止状态。
+分析blocked和waiting状态
+java中的blocked状态是针对synchronized关键字来说的，一般是针对临界区，线程争抢锁，失败的就进去到blocked状态，也就是没有进入临界区
+而waiting状态（object.wait()）一般是先获取到锁后，进去同步代码块后，由于某些业务条件不满足,即其他条件不满足，会进入到waiting状态
+像waiting,notify,notifyall这类方法，需要在同步代码块中调用，即拥有对应对象的同步锁，否则会跑出illegalMonitorStateException，表示调用这些方法，但是
+没有调用获取到对应对象的锁
