@@ -17,5 +17,27 @@ synchronized 的wait ,notify,notifyAll 与lock对应的condition中的await,sign
 等待队列，等待（notify或者signal）
 lock的condition有一个好处，就是同一把锁可以有多个条件，lock.newCondition (非空)lock.newCondtion(非满)，不同条件唤醒不同的等待队列。
 
-线程顺序执行的方法：
-1 
+线程顺序执行的方法：A线程先执行，B线程后执行
+1 join方法：B线程里调用A线程的join方法，相当于等待A线程执行完，B再继续执行
+2 wait方法：threadA{
+               run(){
+                   synchronized(lockObject){
+                      flag = true;
+                      lockObject.notifyAll();
+                   }
+               }
+          }
+          Thread B{
+              run(){
+                  if(!flag){
+                      lockObject.wait();
+                  }
+                  synchronized(lockObject){
+                      
+                  }
+              }
+          }
+3 countdownLatch
+ CountDownLatch cd = new CountDownLatch(1);
+ ThreadA: cd.countdown(1);
+ ThreadB: cd.await();
