@@ -16,3 +16,6 @@ synchronized 的wait ,notify,notifyAll 与lock对应的condition中的await,sign
 但是A线程执行过程中，由于某些业务条件，调用（object.wait方法，或者lock对应的condition的await方法）进入等待状态，此时等待需要释放锁对象，进入到所谓的
 等待队列，等待（notify或者signal）
 lock的condition有一个好处，就是同一把锁可以有多个条件，lock.newCondition (非空)lock.newCondtion(非满)，不同条件唤醒不同的等待队列。
+
+线程顺序执行的方法：
+1 
