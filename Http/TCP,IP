@@ -1,0 +1,14 @@
+三次握手：
+客户端建立连接第一次，发送sync包，进入到sync_send状态
+服务器收到连接请求包，发送ack同时发送sync包，进入到sync_recv状态
+客户端收到sync+ack包，发送完ack后，进入established状态。
+
+四次挥手:
+主动关闭的一方首先发送Fin包，进入到fin-wait状态
+被动方收到fin包后，发送ack,进入到close_wait状态
+被动方发送fin包，同时进入last_ack状态
+主动关闭方收到fin包后，发送ack，进入到time_wait状态。
+接受方收到fin包对应的ack后，关闭连接
+主动关闭方等待2MSL时间后也关闭
+
+
