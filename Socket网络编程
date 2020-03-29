@@ -42,10 +42,19 @@ BIO(blocking IO)
 可读可写的状态，最终recvfrom调用的都是真实产生读写请求的fd。
 问题：1次select()传递n个fd，内核内部主动循环遍历n个fd，
 
-首先要减少fd的传入，即内核里开辟一个空间，每次有新的fd，直接放进去。其次，需要判断可读可写，从主动遍历改为：基于事件驱动，如果有m个可读可写，专门放
-到另外一个区域，即为Epoll模型
+首先要减少fd的传入，即内核里开辟一个空间，每次有新的fd，直接放进去。其次，需要判断可读可写，从主动遍历改为：基于事件驱动，即中断，如果有m个可读可写，
+专门放到另外一个区域，即为Epoll模型
+
+new socket()--->5 创建监听连接请求的socket
+new epoll_create()---->6 
+epoll_ctl(6,add,5,accpet) ----> 将监听请求的socket事件放入到epoll中
+epoll_wait(6)--->处理活跃的socket事件
 
 
+有些软件是使用epoll模型
+1 redis
+
+2 nginx
 
 
 
