@@ -1,6 +1,12 @@
 ThreadLocal
 ThreadLocal为java并发提供了一个新的思路，它用来存储Thread的局部变量，从而达到各个Thread之间的隔离运行，但是用不好导致内存泄露
 
+用在什么地方？
+用在多线程场景下，保存线程的上下文信息，在任意需要的地方可以获取，线程安全的
+eg:spring的事务管理，用ThreadLocal存储Connection，从而各个dao可以获取同一connection，也可以进行事务回滚提交等操作
+   SimpleDataFormat是线程不安全的类，也可以用ThreadLocal来避免线程不安全
+
+
 先说内存泄露原因探索
 ThreadLocal的内部类ThreadLocalMap中的Entry的设计
 Entry继承了WeakReference<ThreadLocal<?>>,即Entry的key是弱引用，所以Key会在垃圾回收的时候被回收掉，而key对应的value则不会被回收，从而导致key为null
