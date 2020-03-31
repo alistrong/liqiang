@@ -53,12 +53,18 @@
   sql语句优化：
   使用limit对查询结果限定；
   少用select*,只去需要的列，避免无谓IO.cpu和网络开销;
+  尽量避免where子句中使用or来连接条件
+     反例： select * from user where userid = 1 or age = 18
+     正例：select * from user where userid =1 union all select * from user where age = 18
+     or的使用可能会导致索引失效，从而全表扫描
   避免大SQL，将复杂sql拆分多条简单sql;
   Or改成IN ：OR的效率是n级别 ，IN的效率是log(n)级别，in的个数建议控制在200以内。
   减少mysql端的数学运算和逻辑判断；
   where 条件避免使用!=操作符，否则会放弃索引，进行全表扫描。
   where 条件字段类型和传入的类型保持一致，避免隐式转换 eg code varchar(50) where code = '1000'(使用索引) where code =1000(不使用索引)
   分页优化：select * from table limit 1000,10 偏移越大越慢。select * from table where id >=() limit 10;
+  like语句避免前缀匹配，导致索引失效
+  使用联合索引，注意索引列的顺序，遵循最左匹配原则
   因为分页语句查询的时间和起始记录的位置成正比，
   
 8.设计mysql表需要注意的地方
