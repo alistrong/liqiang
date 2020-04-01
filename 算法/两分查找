@@ -1,0 +1,30 @@
+两分查找最开始就知道适合于有序数组查找数据
+
+
+1 吃香蕉，N堆，正常一个小时吃一个堆，吃不完留下来下一个小时吃，再H个小时的前提下，问最慢速度吃？
+分析，如果时间H很长，最慢就是每小时吃1根香蕉，如何时间H很短，最慢就是max(N堆)
+
+正常思路
+for(int i=1;i<=max(N堆),i++){
+   if(ff(i,N堆,H)){
+       return i;
+   }
+}
+//即从1开始遍历，如何满足能吃完，就返回结果，
+分析：与其从1开始遍历，还是不如从中间开始遍历，利用两分查找的思想开始判断是否满足条件，因此从上述的case可以分析二分查找也适合于下列模板的
+for(int i=1;i<max;i++){
+    if(ff(i)){
+        return ans;
+    }
+}
+
+下面针对上述的例子看看ff(speed,N堆,H)具体的代码
+int sum =0;
+for(int i=0;i<nums.length;i++){
+    sum+=fcount(speed,nums[i]); //fcount() = nums[i]/speed+ nums[i]%speed>0?1:0;
+}
+if(sum>H){
+    return false;
+}
+return true;
+最后时间复杂度是O（NlogN）
