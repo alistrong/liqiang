@@ -50,5 +50,22 @@ head.next = pre;
  先求出两个链表的长度L1和L2,然P1指针先走L1-L2歩，然后两个指针不断向后遍历，然后每走一步，判断是否相等，相等即为结果。
  
 5 判断是否有环及入环的节点。
-
+ 判断是否有环？快慢指针
+ public boolean hasCircle(Node head){
+     Node slow = head;
+     Node fast = head;
+     while(slow!=null && fast.next!=null){
+         slow = slow.next;
+         fast = fast.next.next;
+         if(slow == fast){
+            return true;
+         }
+     }
+     return false;
+ }
+ 入环的节点？
+ 需要证明 相交点从入环节点 == 从头到入环节点
+ （节点头）-----L-----(入环点)-------(相交点) ---M-----（入环点）
+ 利用快慢指针n 2n 得到L = n被环长+M ,即从相交节点，慢指针从头，快指针从相交点都以1倍速度走，就可以到在入环处相交。
+                   
 
