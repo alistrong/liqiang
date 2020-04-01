@@ -61,3 +61,55 @@ int subarraySum(int[] nums, int k) {
 思路三，可以先排序，利用双指针，时间复杂度O（nlogn） 
 
 总结：设计的核心在于权衡，利用不同的数据结构，可以得到一些针对性的加强，比如find的时间度要求更新，则用map再存储结果
+
+3 最大子数组和
+
+public int maxSum(int num[]){
+    if(num==null || num.length==0){
+       return 0;
+    }
+    int max = num[0];
+    int sum = num[0];
+    for(int i=1;i<num;i++){
+        if(sum+num[i]>num[i]){
+           sum= sum[i]+num[i];
+        }else{
+           sum = num[i];
+        }
+        max= max>sum?max:sum;
+    }
+    return max;
+}
+
+4 删除重复元素，由于数组的特性，不想删一个，然后移动后面的数据，删一个，移动后面的数据
+思路用到双指针技巧，即快慢指针，慢指针在后面慢慢走，快指针前面走，一发现不重复的元素，就赋给慢指针，慢指针往前移动一步
+int removeDupli(int num[]){
+    int n=num.length;
+    if(n==0) return 0;
+    int slow =0,fast =1;
+    while(fast<n){
+        if(num[fast]!=num[slow]){
+            slow++;
+            num[slow]=num[fast];
+        }
+        fast++;
+    }
+    return slow+1;
+}
+
+Node delDupNode(Node head){
+    if(head==null| head.next==null){
+        return;
+    }
+    Node cur= head;
+    Node next= cur.next;
+    while(next!=null){
+        if(cur.val!=next.val){
+            cur.next = next;
+            cur=cur.next;
+        }
+        next =next.next;
+    }
+    slow.next=null;
+    return head;
+}
