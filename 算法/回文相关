@@ -1,0 +1,98 @@
+1 普通字符串判断是不是回文，非常简单
+public boolean isPar(String s){
+    int left = 0;
+    int right = s.length-1;
+    while(left<right){
+        if(s.chatAt(left)!=s.chatAt(right)){
+            return false;
+        }
+        left++;
+        right--;
+    }
+    return true;
+}
+
+2 对于单链表咋处理呢？
+ 第一种思路是反转链表，然后跟原链表进行比较
+ 第二种思路是不用显示的反转链表，通过递归获取链表的逆序，然后可以进行比较
+ void travese(Node head){
+     if(head == null)return ;
+     travese(head.next);
+     print(head.val);//此处相当于后序遍历，按照4,3,2,1打印出，即逆序
+ }
+ 
+ Node left;
+ boolean isPar(Node head){
+    left = head;
+    return reverse(head);
+ }
+ boolean reverse(Node right){
+     if(node ==null)return null;
+     boolean res = reverse(node.next);
+     //后序的逻辑
+     res  = res && (left.val==right.val);
+     left = left.next;
+     return res;
+ }
+第三种思路，分析上述的两个方法，时间和空间都是O（n）复杂度，能不能不用额外空间 
+1 先找到链表的中间节点，看奇数还是偶数，
+2 然后反转中间节点之后的链表从而得到 1,2,3,4, 4,3,2,1==>(1,2,3,4,1,2,3,4)
+3 然后就可以遍历判断了left ==right
+上述方法有个不好的地方，破坏了原来的链表的结构，可以在return之前，再调整链表。
+
+
+3 求最长回文子串，
+ eg input : abbc  abbdbd
+    ouput : bb     bdb
+  3.1 最直接的反应先获取给定串的所有字段，然后判断是不是回文，复杂度N^2*N
+  3.2 利用中心扩展算法，优化一点,时间复杂度O(n^2)，空间复杂度O(1)
+      把给定字符串的每个字母或者两个字母之间的间隙作为中心，向两边扩展，判断回文，获取最大长度
+      
+      String longestPar(String s){
+          int start = 0; //回文开始位置
+          int end = 0;   //回文结束位置
+          for(int i=0;i<s.length;i++){
+               int len1 = expand(s,i,i);
+               int len2 = expand(s,i,i+1);
+               int res = Math.max(len1,len2);
+               if(res>end-start){
+                  start = i-(len-1)/2;
+                  end = i+len/2;
+               }
+          }
+          return s.sub(start,end+1);
+      }
+      3.3 利用dp[][]动态规划
+      dp[i][j] 表示s(i,j)表示的子串是否是回文
+      当i==j 时 dp[i][j] =  true;
+      当j-i < 3 时 如果s[i]==s[j] 则dp[i][j]=true;否则是false
+      当j-i > 3 时 如果s[i]==s[j] 且dp[i+1][j-1]=true 则dp[i][j]=true;否则是false;
+      
+      String dpPar(String s){
+          if(s == null || s.length<=1){
+              return s;
+          }
+          int len = s.length;
+          boolean dp[][]=new boolean[len][len];
+          int left  =0;
+          int right =0;
+          for(int i=len-1;i>=0;i--){
+              dp[i][i]=true;
+              for(int j=i+1;j<len;j++){
+                  dp[i][j]= s[i]==s[j] && ((j-i<3)||dp[i+1][j-1]);
+                  if(dp[i][j] && j-i>end-start){
+                      end =j;
+                      start=i;
+                  }
+              }
+          }
+          return s.subString(start,end);
+      }
+      3.3 还有更优化的，时间复杂度弄成线性程度
+      
+      
+      
+      
+  
+  
+ 
