@@ -1,5 +1,32 @@
 两分查找最开始就知道适合于有序数组查找数据
 
+1最平常的二分查找代码
+int start = 0;
+int end = length-1;
+while(start<=end){
+    int mid = (end-start)/2+start;
+    if(num[mid] == target){
+        return mid;
+    }else if(num[mid]<target){
+        start = mid+1;
+    }else{
+        end = mid-1;
+    }
+}
+2 如果有相等的，找最左边的那个，eg(1,2,3,3,3,3,3,5,6,7,8)找到3 ，返回下标为 2
+int start=0;
+int end= length-1;
+while(start<end){
+    int mid = (end-start)/2+start;
+    if(num[mid]<target){
+        start = mid+1;
+    }else{
+        end = start;
+    }
+    return start;
+}
+
+
 
 1 吃香蕉，N堆，正常一个小时吃一个堆，吃不完留下来下一个小时吃，再H个小时的前提下，问最慢速度吃？
 分析，如果时间H很长，最慢就是每小时吃1根香蕉，如何时间H很短，最慢就是max(N堆)
