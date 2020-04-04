@@ -87,5 +87,60 @@ public static boolean isleaf(Tree t){
     return t.left ==null && t.right==null;
 }
 
+//最大路径和
+int max = 0;
+public int maxSum(TreeNode root){
+    if(root ==null) return 0;
+    maxDepth(root);
+    return max;
+}
+
+public int maxDepth(TreeNode root){
+    if(root ==null) return 0;
+    int leftDepth = maxDepth(root.left)+1;
+    int rightDepth = maxDepth(root.right)+1;
+    if (leftDepth+rightDepth>max){
+        max = leftDepth+rightDepth;
+    }
+    return Math.max(leftDepth,rightDepth);
+}
+
+//求node1和node2节点的公共祖先
+public TreeNode lowAncestor(TreeNode root,TreeNode node1,TreeNode node2){
+    if(root == null || root == node1 || root == node2){
+        return root;
+    }
+    TreeNode leftnode = lowAncestor(root.left,node1,node2);
+    TreeNode rightnode = lowAncestor(root.right,node1,node2);
+    
+    if(leftnode !=null && rightnode != null){
+        return root;
+    }
+    if(leftnode !=null){
+        return leftnode;
+    }
+    if(rightnode != null){
+        return rightnode;
+    }
+}
+//最基本层次遍历
+public List<TreeNode> laywer(TreeNode root){
+    ArrayList<TreeNode> res = new ArrayList<>();
+    Queue queue = new LinkedList<TreeNode>();
+    queue.push(root);
+    while(!queue.empty){
+        TreeNode node = queue.pop();
+        res.add(node);
+        if(node.left!=null){
+            queue.push(node.left);
+        }
+        if(node.right!=null){
+            queue.push(node.right);
+        }
+    }
+    return res;
+    
+
+}
 
 
