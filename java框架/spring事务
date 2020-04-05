@@ -1,0 +1,30 @@
+spring事务，常用方式：
+
+@Transactional(propagation = Progagation.REQUIRED) //会使用aop机制，
+public void methodA(){
+    methodB();
+}
+
+@Tranctional(progagation= Progagation.REQUIRED)
+public void methodB(){
+    methodA();
+}
+
+事务传播情况：方法A开启了事务，但是方法A里面的调用方法B，如何管理两个事务呢？
+1 PROGAGATION.REQUIRED 如果当前没有事务，就开启一个新事务，如果当前有事务，就加入到当前事务中
+   1 开启事务
+   2 执行方法A，执行方法B
+   3 提交事务
+2 PROGAGATION.SUPPORTS 如果当前支持事务，就加入到该事务中，如果当前不支持事务，就以非事务方式运行
+3 PROGAGATION.MANDATORY 如果当前支持事务，就加入该事务中，如果当前不存在事务，就抛异常
+4 progagation.require_new 不管当前有没有事务，都开启新的事务
+ 各自为事务，自己失败就回滚自己
+5 PROGAGATION.NOT_SUPPORT 强制以非事务方式运行，如果当前存在事务，事务就挂起
+6 PROGAGATION.NEST 嵌套事务， 外层回滚会导致内层也回滚，内层回滚只回滚自己的。
+  begin transaction A
+  A  method do
+  begin transaction B
+  B method do        //如果B方法执行失败时，只回滚到B事务开启前，A method不动
+  B transaction commit  
+  A method do        //此时如果A方法执行失败，整个全部回滚，包括B方法
+  A transaction commit
