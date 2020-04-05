@@ -6,6 +6,60 @@ why?
 1 对象的实例化不是一个简单的事，如对象关系很复杂，依赖关系需要程序员维护，非常头疼
 2 解耦，由容器维护具体的对象
 3 托管类的产生过程，需要在类的产生过程中做一些处理，比如代理。
+在没有spring之前的样子,最原始最基础的情况：
+
+首先有一个web服务器（tomcat），启动后监听一个端口号的http请求，然后把监听到的请求转发给servlet，servlet处理请求
+浏览器----Http request-->(port)tomcat----->自己写的servlet类
+public class MyServlet{
+    private MyService myService= new MyServiceImpl();
+    public void doPost(HttpServletRequest request){
+        //处理请求
+        myService.doSomething(request);
+    }
+}
+即servlet里面new object，然后调用对象的方法，这样做的问题在于，在我们的系统中有几十个地方，都是使用myService = new MyServiceImpl(),即耦合在一起
+比如我们不想用MyServiceImpl，想用新的类NewServiceImpl，此时我们需要改动几十个地方。改动成本大，即代码里各个类耦合在一起，出现一点变动，需要改动很多
+由此出现spring IOC
+上述代码就改为：
+@Controller
+public class Controller{
+    @Resource
+    private MyService myService;
+    public void doPost(HttpServletRequest request){
+        //处理请求
+        myService.doSomething(request);
+    }
+}
+@Service 
+public class MyServiceImpl implements MyService{
+    
+}
+如果myService想改成NewMyServiceImpl就可以把原来的类上面的注解去掉，@Service注解加到NewMyServiceImpl类上。
+tomcat-----启动----->spring容器（扫描我们所有的代码，看注解或者xml配置，创建对应实例bean，然后对bean对象之间的引用关系进行依赖注入）
+主要通过反射技术实现。
+
+spring核心架构
+bean实例生命周期 从创建--使用--销毁
+1 如果要使用bean，spring首先会实例化这个bean，
+2 看看有没有依赖引用，如果有，把相应的依赖引用的bean也实例化，即对象的属性注入
+3 处理aware接口，看看对象是否实现了***aware接口，把相关***Aware实例注入到这个bean
+  比如这个bean实现了ApplicationContextAware接口，spring容器就会调用setApplicationContext()方法，把这个bean传入spring上下文。
+4 如果想对bean进行自定义处理，让bean实现BeanPostProcessor()接口，将调用postProcessorBeforeinital(object o,String s)
+5 初始化方法
+6 如果bean实现了beanPostProccesor接口，就会调用postProcessorAfterInitilzation()接口,进行初始化后的接口调用。
+7 如果bean不需要使用了，调用对应的销毁方法destory
+
+另外一个角度回答：
+1 实例化
+2 属性赋值
+3 初始化 //初始化前后都有beanProcessor对应的方法，AOP实现的关键点，即初始化之前或者之后都可以调用一些方法
+4 销毁
+
+
+
+
+
+
 
 问题2 AOP
 
