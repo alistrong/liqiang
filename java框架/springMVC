@@ -13,3 +13,15 @@ urlMap(key,method)（/user/getInfo, getInfo()method）
 method.invoke();从而url调用controller里面的对应方法。
 
 核心DispatcherSevlet
+
+
+正常的一个请求流程：
+
+1 tomcat启动监听请求，当请求过来时，请求转发给spring-mvc后端DispatcherServlet，
+2 dispatcherServlet根据请求信息调用HandlerMapping,解析请求的handler，（即找对应的@Controller）
+3 DispatcherServlet调用HandlerAdapter处理器适配器，告诉处理器适配器应该要去执行哪个Controller
+4 HandlerAdapter处理器适配器去执行Controller并得到ModelAndView(数据和视图)，并层层返回给DispatcherServlet
+
+
+
+
