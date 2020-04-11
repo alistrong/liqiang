@@ -104,5 +104,14 @@ IP协议（Internet protocol），解决通信双发寻址的问题，IP协议�
  Content-Encoding:gzip
  Content-Type:text/html;charset=utf-8
  
+ http是无状态协议，如何保存用户的状态？
+ session机制是解决这个问题的，session就是通过服务端记录用户的状态，典型应用场景就是购物车，添加商品到购物车，服务端会给特定的用户创建特定的session后
+ 就可以标识这个用户，然后跟踪这个用户的行为，服务端保存session的方式很多，最常用的就是内存和redis数据库，session是存放到服务端的，如何跟踪呢？
+ 一般会在cookie上增加sessionId的方式来跟踪，如何关闭了cookie，则把sessionId传到url里
+ session和cookie的区别 都是用来跟踪浏览器用户身份的会话方式
+ cookie一般用来保存用户信息，存在于浏览器，一般帮助用户登录
+ session跟踪用户的会话行为，存在于服务器端，
+ 
+ 
  
  
