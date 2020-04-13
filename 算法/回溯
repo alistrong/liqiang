@@ -98,3 +98,24 @@ void combine(int n,int k,int start,Vector<int> track){
 某种程度动态规划的暴力求解就是回溯算法，只是有的问题具有重叠子问题性质，可以用dp table或者备忘录优化，将递归大幅剪枝，就变成动态规划了，而如果问题没有
 重叠子问题，就是回溯算法了。
 
+// 给出整数n，求n对括号的合法正确组合，比如n=2 (())   ()()
+  怎么算合法正确的组合，一般是任意范围内的左括号个数>=右括号的个数 且最后左括号==右括号
+  上述的问题也可以转化成现在有2n个位置，每个位置可以放 ( 或者 ），组成括号的组合中有多少个是合法的
+  每个位置有2中可能，即总共2^(2n)个情况，其中多少是合法的，就是最终的结果
+  void backtrack(list<Charactor> track,int left,int right,){ //left表示目前可用的左括号个数，初始化为n
+      if(left>right) return; //不合法，剪枝
+      if(left<0|| right<0) return; //不合法，剪枝
+      if(left==0 && right==0){
+          res.add(track);
+      }
+      track.push('(');
+      backtrack(track,left-1,right);
+      track.pop();
+      track.push(')');
+      backtrack(track,left,right-1);
+      track.pop();
+  }
+  
+  
+  
+  
