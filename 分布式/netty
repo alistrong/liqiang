@@ -1,0 +1,41 @@
+netty:高性能，异步事件驱动的NIO框架，提供了对TCP,UDP和文件传输的支持
+      所有的IO操作都是异步非阻塞的，通过future-listener机制，用户可以主动获取或者通过通知机制获得IO操作结果
+      
+传统RPC调用性能差：
+  1 网络传输方式：采用同步阻塞IO，当客户端并发压力大或者网络时延增加后，同步阻塞IO会由于频繁的wait导致IO线程经常性的阻塞，
+    client--BIO--> new Thread()处理,
+    采用同步阻塞IO，会导致每个TCP链接占用一个线程，而线程属于非常宝贵的资源，当IO读写阻塞导致线程无法及时释放时，到导致性能下降
+  2 序列化方式：Java序列化是Java内部的一种对象编解码技术，无法跨语言使用，
+               Java序列化后的流太大，无论是网络传输还是持久化到磁盘，都会导致额外的资源占用
+               序列化性能差，cpu资源占用高
+ 
+而如何保证高性能
+1 传输：用什么样的通道将数据发给对方，BIO,NIO,AIO
+2 协议：采用什么样的通信协议，HTTP或者内部私有协议，
+3 线程：数据报如何读取？读取之后的编解码在那个线程进行，编解码后的消息如何派发，Reactor线程模型影响很大
+
+下面看看netty的高性能之道
+1 异步非阻塞通信
+  IO通信时，当需要同时处理多个客户端接入请求时，可以利用多线程或者IO多路复用技术进行处理。IO多路复用技术通过把多个IO的阻塞复用到同一个selector的阻塞上。
+从而系统在单线程的情况下可以同时处理多个客户端的请求，整体系统开销少，节省系统资源
+下面是netty基于Reactor模型设计
+
+NIOserver                                     Reactor Thread                             ioHandler
+1 打开serversocketChannel
+2 绑定监听地址 InetSocketAddress
+                                            3 创建Selector，启动线程
+4 将serversocketChannel注册到Selector    
+                                            5 selector轮询就绪的key
+                                            6 handleAccept()处理新的客户端接入     
+                                                                                     7 设置新建客户端连接的socket
+                                            8 向selector注册监听读操作
+                                            9 handleRead异步读请求处理
+                                                                                     10 decode请求
+                                            11 异步写ByteBuffer到socketChannel
+                                            
+Netty的IO线程NioEventLoop由于聚合了多路复用器selector，可以同时并发处理成百上千个客户端channel，由于读写操作都是非阻塞的，可以充分提升IO线程的运行
+效率，避免由于频繁IO阻塞导致线程挂起，另外由于netty采用了异步通信模式，一个IO线程可以并发处理N个客户端连接和读写操作，
+2 0拷贝技术
+ netty的接收和发送ByteBuffer采用DIRECT BUFFERS,即使用堆外直接内存进行socket读写，不需要二次拷贝
+3 内存池
+
