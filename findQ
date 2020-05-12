@@ -1,4 +1,4 @@
-1 定位CPU高的原因：
+1 定位CPU高的原因：（业务逻辑死循环，频繁GC，上下文切换）
    首先：根据输入top命令后 再输入P， 查看cpu消耗高的pid。 
    然后：根据命令 top -P -a pid 查看这个pid下面消耗CPU最大的线程 tid  (printf '%x\n' tid 得到tid对应的十六进制)
    最后：jstack pid|grep tid(十六进制)            jstack(查看当前所有线程的运行情况和线程当前状态)
@@ -7,6 +7,14 @@
                   2   wait()  Thread.State: WAITING
                   3   死锁    deadlock
                   4   等待IO  
+   下面详述一下jstack文件的信息说明：
+   java.lang.Thread.State: BLOCKED (on object monitor) 等待进入临界区，可能在entry set等待队列中，waiting for monitor entry
+   java.lang.Thread.State: WAITING (parking),等待另一个条件唤醒自己，waiting on condition
+   如果大量线程处于 waiting for monitor entry,即大量线程等待进入同步区，可能全局锁阻塞了大量线程，意味着某个线程在临界区待的时间太长，
+   如果大量线程处于 waiting for condition,可能线程跑去获取第三方资源，迟迟获取不到response,导致进入等待状态，比如等待网络读写，
+   
+   
+   
 2 定位堆溢出问题：
    首先：利用jstat -gcutil pid 查看堆内存使用情况.
    然后：jmap dump:format=b,file =[文件输出路径][pid] 得到dump出来的文件              jmap(监视进程运行中的jvm物理内存的占用情况)
