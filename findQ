@@ -13,7 +13,7 @@
    如果大量线程处于 waiting for monitor entry,即大量线程等待进入同步区，可能全局锁阻塞了大量线程，意味着某个线程在临界区待的时间太长，
    如果大量线程处于 waiting for condition,可能线程跑去获取第三方资源，迟迟获取不到response,导致进入等待状态，比如等待网络读写，
    
-   
+   对于上下文切换的问题：利用vmstat命令查看 其中cs(context switch)代表上下文切换
    
 2 定位堆溢出问题：
    首先：利用jstat -gcutil pid 查看堆内存使用情况.
