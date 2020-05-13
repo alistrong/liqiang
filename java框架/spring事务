@@ -1,6 +1,12 @@
 spring事务，常用方式：
 
-@Transactional(propagation = Progagation.REQUIRED) //会使用aop机制，
+@Transactional 作用范围： 应该应用到public方法中，否则不生效，如果注解在类上，则表明该类的public方法都生效，不推荐在接口上使用
+避免同一个类中调用 @Transactional 注解的方法，这样会导致事务失效
+
+@Transactional(propagation = Progagation.REQUIRED) //会使用aop机制，（动态代理，如果目标对象实现了接口，默认采用动态代理，没有实现接口，采用
+CGLIB动态代理，即为其创建一个代理类，在调用的时候，实际调用的是事务类的invoke方法，这个方法就是在目标方法之前开启事务，执行过程中遇到异常回滚事务，
+方法执行完后提交事务）
+
 public void methodA(){
     methodB();
 }
@@ -28,3 +34,8 @@ public void methodB(){
   B transaction commit  
   A method do        //此时如果A方法执行失败，整个全部回滚，包括B方法
   A transaction commit
+  
+  Spring AOP 自调用问题
+  若同一类中其他没有@Transactional注解的方法内部调用@Transactional注解的方法，有@Transactional注解的方法事务会失效
+  这是由于spring aop代理原因造成的，因为只有@Transactional注解的方法在类之外被调用时，spring事务才生效
+  
