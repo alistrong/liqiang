@@ -40,3 +40,8 @@ join:groupid        uid                     msgIndex                 addTime
 uid                 gid                     {sessionInfo}            last_msg_id
 
 
+//会话统计
+session:uid1:uid2    null                  msginfo1{uid1的第一条消息，uid1的最后一条消息}
+                                           msginfo2{uid2的第一条消息，uid2的最后一条消息}
+
+
