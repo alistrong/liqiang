@@ -1,0 +1,42 @@
+用户基本资料的存储以及用户的token生成与校验及用户的版本号信息
+
+row                      col                   value              score
+uid                      info                   {}
+version:uid             deviceId              version
+uid                     server              {四个版本号}        timestamp
+imtoken:uid             clientType             token            
+
+
+关系服务服务
+
+friend:uid             otherid                 null             updateTime
+friend_num:uid                                                   count
+contact:uid            otherid                 { }              updateTime
+glist:uid              groupid                                  updateTime
+gmen:groupid           userid                  { }              updateTime 
+
+消息服务存储
+//单聊
+uid1:uid2:msgid         null                   {msgInfo}            createTime
+uid1:uid2               msgid                  {msgList}            msg_index
+msguuid:uid1:uid2       uuid                   msg_index                        //消息排重
+unread:sender:to        msgid                                                   //未读消息
+recent:uid              otherid                sessionInfo          last_msg_id
+
+msgInfo:{
+    senderid/toid/msgType/showType/content
+    msgsource/msguuid/refer
+}
+msgList:{
+    ackTime/playTime/createTime/showTime/msgstatus/senderId
+}
+sessionInfo:{
+    senderId/linkMsgId/showCount/lastMsgIndex/showInApp/lastshowedMsgId/sessionInfo
+}
+//群聊
+groupid:msgid       null                    {msgInfo}                createTime
+groupid             msgid                   {msgList}                msg_index
+join:groupid        uid                     msgIndex                 addTime
+uid                 gid                     {sessionInfo}            last_msg_id
+
+
