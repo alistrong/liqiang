@@ -63,3 +63,10 @@ age     2
 弱引用：可有可无，拥有更短暂的生命周期，不管当前内存空间是否足够，都会回收它的内存，
 虚引用：形同虚设，用来跟踪对象被垃圾回收的活动。
 
+我们知道ThreadLocal是相对于每个线程自己使用的本地变量，如何有父线程的变量需要传递到子线程中进行使用，ThreadLocal就解决不了这个问题，ThreadLocal有
+一个子类InheritableThreadLocal就是为解决这个问题而产生的，使用这个变量就可以轻松的在子线程中仍旧使用父线程的本地变量
+
+分析：Thread类维护了两个成员变量，ThreadLocal和InheritableThreadLocal，数据类型都是ThreadLocalMap,首先解释了为什么这个变量是线程私有的，
+当在一个主线程中开一个新的子线程的时候，开始会new一个新的thread，里面会调init方法，具体会对InheritableThreadLocal进行操作，获取父线程也就是当前
+实际开辟线程的主线程，当父线程中的inheritableThreadLocal被赋值时，会将当前线程的inheritableThreadLocal变量进行createInheritedMap(),会继续调用
+ThreadLocalMap(parentMap),主要目的是父线程的变量值赋值给子线程
