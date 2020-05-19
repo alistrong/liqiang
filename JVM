@@ -58,7 +58,13 @@ volatile关键字
      另外长时间的自旋导致开销大，
      第三方面ABA问题，解决思路是引入版本号，Java使用AtomicStampedReference来
      
-再介绍synchronized优化前，先了解一下对象头的一些概念：
+再介绍synchronized优化前，先了解一下对象在内存中的存放以及对象头的一些概念：
+在jvm中，对象在内存中分为三块区域：
+1 对象头（1.1 mark word标记字段，存储对象hashcode,分代年龄，锁标志位，随着锁标志位变化而变化；1.2 Klass Point类型指针，指向类元数据的指针，通过这个
+指针确定这个对象是那个实例）
+2 实例数据（存放类的数据信息，父类信息）
+3 填充对齐
+
 synchronized获取对象的monitor，及对象的锁，那个对象的锁是什么概念呢，类似对这个对象的标识，这个标识就放在Java对象的对象头中，具体对象头（mark word）
  锁的状态：对象的hashcode（25bit）/ 对象分代年龄（4bit）/是否是偏向锁（1bit）/锁标志位（2bit）
  在SE1.6版本锁状态共有4种，无锁，偏向锁，轻量级锁，重量级锁，能升级不能降级
@@ -71,6 +77,15 @@ synchronized获取对象的monitor，及对象的锁，那个对象的锁是什�
     指向线程的栈帧锁记录 (62bit)  / 锁状态 00 (2bit)
  当竞争这个锁的线程变得更多，此时升级为重量级锁，MarkWord再次变化为指向对象监视器，
     指向监视器对象  (62bit) / 锁状态 10 (2bit)
+synchorized关键字使用：
+1 用在实例方法上，eg public synchronized void get(){} //锁住的是当前实例对象
+2 用在静态方法上，eg public static synchronized void get(){} //锁住的是当前class对象
+3 用在代码块上， eg public void  get(){
+                        synchronized(obj/A.class){ //锁类或者实例对象
+                        
+                        }
+                   }
+                   
 Synchorized详解：
 使用Synchorized关键字，关键是要获取对象的监视器，才能执行，否则要等待，而且这个获取过程是互斥的，即只有一个线程能获取到monitor，这种互斥的方式导致
 使用性能下降，因此引入锁的优化，即将获取锁的时间缩短，
