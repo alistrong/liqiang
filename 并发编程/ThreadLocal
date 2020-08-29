@@ -3,8 +3,9 @@ ThreadLocal为java并发提供了一个新的思路，它用来存储Thread的�
 
 用在什么地方？
 用在多线程场景下，保存线程的上下文信息，在任意需要的地方可以获取，线程安全的
-eg:spring的事务管理，用ThreadLocal存储Connection，从而各个dao可以获取同一connection，也可以进行事务回滚提交等操作
-   SimpleDataFormat是线程不安全的类，也可以用ThreadLocal来避免线程不安全
+eg:1:spring的事务管理，用ThreadLocal存储Connection，从而各个dao可以获取同一connection，也可以进行事务回滚提交等操作
+   2:jdbc连接池
+   3:SimpleDataFormat是线程不安全的类，也可以用ThreadLocal来避免线程不安全
 
 
 先说内存泄露原因探索
