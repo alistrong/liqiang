@@ -37,6 +37,11 @@ public class MyServiceImpl implements MyService{
 如果myService想改成NewMyServiceImpl就可以把原来的类上面的注解去掉，@Service注解加到NewMyServiceImpl类上。
 tomcat-----启动----->spring容器（扫描我们所有的代码，看注解或者xml配置，创建对应实例bean，然后对bean对象之间的引用关系进行依赖注入）
 主要通过反射技术实现。
+即运行状态中，对于任意一个类，能够知道这个类的所有属性和方法，对于任意一个对象，可以调用他的任意方法和属性，这种动态获取信息及动态调用对象方法的功能为反射
+Class
+Field
+Method
+Constructor
 
 spring核心架构
 bean实例生命周期 从创建--使用--销毁
@@ -83,6 +88,9 @@ cglib动态代理和jdk动态代理
   动态代理只能对接口产生代理，不能对类产生代理
 
 2 如果类没有接口（有方法，但是方法都有具体的实现），改用cglib来生成动态代理，它是生成你的类的一个子类，覆盖你的方法，
+
+
+
 
 
 问题3 循环依赖--属性自动注入
