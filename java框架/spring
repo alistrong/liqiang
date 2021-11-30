@@ -160,4 +160,28 @@ A类bean实例化，首先对象初始化，如果支持循环依赖，把对应
 半成品，只是对象，不是bean实例
 
 
+Spring bean作用域与生命周期
+
+1  singleton 单例类型，创建容器时自动创建一个bean对象，不管是否使用，每次获取到的对象都是同一个对象
+2  protoType 原型类型，创建容器的时候并没有实例化，而是当我们获取bean的时候才去创建一个对象，每次获取对象都不是同一个对象，一般对于有状态的使用原型类型，无状态的使用单例类型
+3  request , 表示一次HTTP请求，一次bean定义对应一个实例，每个http请求都有各自的bean实例，作用域仅在基于WEB的Spring ApplicationContext情形下有效，处理请求结束，request作用域bean实例销毁
+4  session， 一个bean定义对应一个实例，该作用域仅在基于Spring ApplicaitonContext情形下有效，
+5  global session
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
