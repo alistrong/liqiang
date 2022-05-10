@@ -1,1 +1,13 @@
+tomcat 免费开源的轻量级应用服务器
+
+tomcat结构：
+顶层容器是server,代表整个服务器，
+一个server可以包含多个service，用于具体提供服务
+一个service包含两部分:Connector(处理连接相关的事情，提供socket与Request请求和Response响应相关转化)和Container(封装管理servlet以及具体处理Request请求)
+接收到客户端请求后，Connector使用ProtocolHandler(代表不同连接类型，比如普通socket请求，NioSocket请求)处理请求，
+     ProtocolHandler包含三个部件 EndPoint、 Processor、 Adatper
+     EndPoint处理底层Socket网络连接，Processor将EndPoint接受到的Socket封装成Request,然后Adapter将Request请求交给Container进行具体处理
+Container包含Engine、Host、Context、Wrapper
+
+
 Tomcat如何设置JVM参数，检查JVM运行情况
