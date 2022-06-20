@@ -12,6 +12,19 @@ rmi协议：Java二进制序列化方式，适用于文件传输，较少使用
 hession协议：hessian序列化协议，多个短连接，适用于提供者数量比消费者数量还多
 http协议：基于json序列化，
 
+netty调用，异步转同步
+网络调用过程：
+1 服务调用者，封装RequestID,将ID和处理结果的回调对象放到一个全局对象concurrentHashMap
+2 将调用信息封装成一个object,通过netty异步发送
+3 当前调用线程使用callBack的get方法尝试获取结果，里面就是判断是否有结果，trylock， await，unlock
+4 服务端接受请求并处理后，将结果发送给客户端，客户端socket链接监听结果，取ID，从而把对应的callback设置上去。
+
+
+负载均衡：
+一致性hash，
+轮询
+加权轮询
+随机
 
 
 
