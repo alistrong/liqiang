@@ -11,6 +11,12 @@ struct redisObject{
     int refcount // 表示对象的引用计数
     void *ptr // 指向真正的存储结构
 }
+
+struct sds{
+    char buff[]
+    int len;
+    int free;
+}
 双向链表实现：
 由listNode和list两个数据结构组成：
 [list]
