@@ -80,8 +80,24 @@ spring注解相关问题：
   private ABC abc;
       
   (byName 是按照bean的ID或者name进行注入，byType是按照bean的class类型进行注入)
+  
 
-
+2 常用的注解
+  @RestController (@Controller[定义在控制层，DispatcherServlet会扫描有此注解的类，然后将web请求映射到下面的这个注解路径上] +` 
+                   @ResponseBody将返回值放在response体内。返回的是数据而不是页面)
+  @RequestMapping("/v1/hbg/open/coupon")
+  public Class UserController{
+      @GetMapping("/list")
+      public Result<List<HbgCouponUserResp>> listCoupon(){
+      
+      }
+      
+      @PostMapping("/ddd")
+      public void get(@RequestBody ABC abc){
+      
+      }
+  
+  }
 
 
 问题2 AOP
@@ -161,9 +177,10 @@ bean实例化过程：
 涉及到的map缓存
 
 1 singletonObjects 单例池，也就是通俗意义上的spring容器，单例对象只会实例化一次，需要缓冲池存放，原形模式不用。
-2 singletonFactories 工厂对象，可以解决循环依赖，提前暴露一个工厂即“半成品”，
+2 earlySingletonObjects 和1几乎一样，2级缓存删除出来，放入到3级缓存中。
+3 singletonFactories 工厂对象，可以解决循环依赖，提前暴露一个工厂即“半成品”，
 why?可以对这个半成品进行加工升华，为什么需要升华加工半成品bean?代理，  可以处理aop。   
-3 earlySingletonObjects 和1几乎一样，2级缓存删除出来，放入到3级缓存中。
+
 
 二级 和 三级 缓存是针对循环依赖而做的，对于非循环依赖的对象，直接使用单例池。
 
