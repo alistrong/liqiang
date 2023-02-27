@@ -66,7 +66,20 @@ bean实例生命周期 从创建--初始化使用--销毁
 4 销毁
 
 
+spring注解相关问题：
 
+1 autowired和resource 区别
+  共同点：都可以作为bean注入时使用
+  但是autowired是spring提供的注解，只按照byType注入，如果想要按照名称（byName）来装配，则可以结合@Qualifier注解一起使用
+  eg: @Autowired
+      @Qualifier("A")
+      private ABC abc;
+      
+  Resource是J2EE提供的，默认按照byName,有两个重要属性，name和type,根据配置设置的进行注入策略，同时指定时，按照type进行装配。
+  @Resource(name = "a")
+  private ABC abc;
+      
+  (byName 是按照bean的ID或者name进行注入，byType是按照bean的class类型进行注入)
 
 
 
