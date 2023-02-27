@@ -44,7 +44,7 @@ Method
 Constructor
 
 spring核心架构
-bean实例生命周期 从创建--使用--销毁
+bean实例生命周期 从创建--初始化使用--销毁
 1 如果要使用bean，spring首先会实例化这个bean，
 2 看看有没有依赖引用，如果有，把相应的依赖引用的bean也实例化，即对象的属性注入
 3 处理aware接口，看看对象是否实现了***aware接口，把相关***Aware实例注入到这个bean
@@ -53,6 +53,11 @@ bean实例生命周期 从创建--使用--销毁
 5 初始化方法
 6 如果bean实现了beanPostProccesor接口，就会调用postProcessorAfterInitilzation()接口,进行初始化后的接口调用。
 7 如果bean不需要使用了，调用对应的销毁方法destory
+
+对象的创建时机：
+对于prototype是单例模式的，则在工厂创建的时候同步创建对象
+如果是原型模式，则在getBean（）时进行对象的创建
+
 
 另外一个角度回答：
 1 实例化
