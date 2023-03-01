@@ -42,7 +42,7 @@ Nacos:
 技术体系：ETCD和Consul基于GO开发，Eureka，Nacos,ZK都是基于JAVA开发，跟自己的技术栈也有关系
 高可用：搭建高可用集群
 与其他组件搭配情况：nacos和spring搭配比较好
-活跃度：
+社区活跃度：
 
 
 
