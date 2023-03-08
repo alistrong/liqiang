@@ -9,7 +9,12 @@ eg：spring boot内嵌了tomcat web服务器可以直接让我们一下把写好
  流程：
  执行main方法，启动内嵌web服务器，
 
-自动装配功能
-核心是@SpringBootApplication注解，他是一个组合注解，其中SpringBootConfiguration,EnableAutoConfiguration,ComponentScan 比较重要
+自动装配功能 定义：自动把第三方组件的bean装载到IOC容器中，不需要开发人员去写bean相关的配置，只需要在启动类上加上SpringbootApplication注解
+核心是@SpringBootApplication注解，他是一个复合组合注解，其中SpringBootConfiguration,EnableAutoConfiguration,ComponentScan 比较重要
+自动装配的实现技术是：
+1 引入相关的 stater，启动依赖组件时，相关的组件需要包含configruation配置类，而这个配置类我们需要通过bean去声明需要装配的对象
+2 这些配置类是放在第三方的jar包里面，然后通过springboot中约定大于配置的理念，去把对应配置类的全路径放在classpath:/META-INF/spring.factories文件中，这样spring就知道第三方
+  jar包里配置类的位置，用到了springFactoriesLoader来完成
+3 spring拿到第三方jar中声明的配置类后，再通过importSelector这样接口实现对这些配置类对动态加载，从而完成自动装配的动作  
 
 
