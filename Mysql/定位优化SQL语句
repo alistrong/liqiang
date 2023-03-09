@@ -23,6 +23,7 @@ explain查询sql执行计划
     using index：查询时不需要回表查询，直接通过索引就可以获取查询的数据
     using temporary：表示使用了临时表存储中间结果
     using where：表示存储引擎返回的记录并不是所有的都满足查询条件，需要在server层进行过滤
+    using index condition: 索引下推，二级索引做过滤，从而回表回少量数据
 
 优化点：
 
