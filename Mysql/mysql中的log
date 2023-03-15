@@ -21,6 +21,14 @@ mysql一般都是主从结构，从数据库需要与主服务器上的数据保
 bin log记录的是sql语句（update,insert,delete），即属于逻辑变化，而redolog记录的是物理修改的内容（那个页做了什么修改），即物理变化
 redo log就是持久化而生的，正常内存数据修改完，没有落盘，机器宕机，这个时间就是通过redolog来重新恢复数据保证持久化的。
 
+
+mysql更新过程：
+客户端----》server层（连接器--查缓存--分析器---优化器---执行器） ---〉 存储引擎
+1 存储引擎将将这行数据更新到内存中，同时更新记录操作到redolog中，此时redolog处于prepare命令中，告诉执行器已经成功，随时可以commit
+2 执行器生成binlog，并将binlog写入磁盘
+3 执行器调用存储引擎提交commit接口，将刚才prepare的改成commit，从而完成数据的更新
+
+
 3 undo log
 作用：回滚和数据多版本控制
 在进行数据修改时，不仅仅记录了redolog，而且还要写undo log，某些原因导致事务失败了，可以用undo log进行回滚。
