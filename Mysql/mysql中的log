@@ -28,6 +28,9 @@ mysql更新过程：
 2 执行器生成binlog，并将binlog写入磁盘
 3 执行器调用存储引擎提交commit接口，将刚才prepare的改成commit，从而完成数据的更新
 
+为什么两阶段：
+在于保证数据的一致性
+
 
 3 undo log
 作用：回滚和数据多版本控制
